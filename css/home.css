@@ -1,0 +1,46 @@
+.navbar-brand {
+    padding: 0px;
+}
+
+h2 {
+    color: red;
+}
+#personal{
+    color:white;
+    font-weight: bold;
+}
+
+.jumbotron{
+    margin-bottom: 5px;
+}
+
+thead {
+    font-size: x-large;
+    font-weight: bolder;
+    padding: 0px;
+}
+
+.thread-title {
+    font-size: large;
+}
+
+.thread-text {
+    font-size: small;
+    font-weight: normal;
+    color: grey;
+}
+
+.thread-number {
+    font-size: normal;
+    font-weight: bold;
+}
+
+.thread-post {
+    color: #AA0000;
+    font-weight: bold;
+}
+
+.thread-last {
+    color: #00AA00;
+    font-weight: bold;
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<head>
+    <style type="text/css">
+        #page-login {
+            text-align: center;
+        }
+        #page-login .form {
+            text-align: center;
+        }
+        #page-login .form input[type=text], #page-login .form input[type=password]
+        { 
+            font-size: 14px; background: #F6F6F6;
+            border: 1px solid #e5e5e5; border-radius: 5px;
+            padding: 0 15px; width: 148px; height: 38px; 
+            box-shadow: none; 
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+    <script src="js/jquery.js"></script>
+    <script>
+        function login()
+        {
+            var usr = document.getElementById("usr").value;
+            var pwd = document.getElementById("pwd").value;
+            var params = {
+                'visitor': 0,
+                "id": usr,
+                "pwd": pwd
+            }
+
+            // todo: this url is only for test. when actually used, it should 
+            // be changed into our own server
+            // todo more: the way to get cookie
+            $.get('http://httpbin.org/get', params, function(obj){
+                if (obj['status'] == 0)
+                // log in successfully, redirect to home page
+                    window.location.href = "home"
+                else
+                    alert("log in failed!");
+            })
+        }
+
+        function signup()
+        {
+            var usr = document.getElementById("usr").value;
+            var pwd = document.getElementById("pwd").value;
+            var params = {
+                "id": usr,
+                "pwd": pwd
+            }
+
+            // todo: this url is only for test. when actually used, it should 
+            // be changed into our own server
+            $.get('http://httpbin.org/get', params, function(obj){
+                if (obj['status'] == 0)
+                    alert('sign up successfully');
+                else
+                    alert('sign up failed'); 
+            })
+        }
+
+        function visitor()
+        {
+            var params = {
+                'visitor': 1,
+                "id": "",
+                "pwd": ""
+            }
+
+            // todo: this url is only for test. when actually used, it should 
+            // be changed into our own server
+            // todo more: the way to get cookie
+            $.get('http://httpbin.org/get', params, function(obj){
+                if (obj['status'] == 0)
+                // log in successfully, redirect to home page
+                    window.location.href = "home"
+                else{
+                    alert("log in failed!");
+                    window.location.href = "home.html";
+                }
+            })
+
+        }
+
+    </script>
+</head>
+<body id="page-login" bgcolor="#000000">
+    <img id="logo" src="img/logo.png">
+
+    <div class="form" style="position: relative">
+        <input id="usr" type="text" name="username" placeholder="username">
+        <input id="pwd" type="password" name="password" placeholder="password">
+
+        <button class="button button-glow button-border button-rounded button-primary" type="button" onclick="javascript:login()"> Log in </button>
+
+        <button class="button button-glow button-border button-rounded button-primary" type="button" onclick="javascript:signup()"> Sign up </button>
+
+        <button class="button button-glow button-border button-rounded button-primary" type="button" onclick="javascript:visitor()"> Visitor </button>
+    </div>
+
+
+</body>

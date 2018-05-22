@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="img/favicon.ico">
+    <title>Anonymous Forum Home</title>
+ 
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/home.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+
+	</head>
+  	<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+        	<div class="navbar-header">
+            	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              		<span class="sr-only">Toggle navigation</span>
+              		<span class="icon-bar"></span>
+              		<span class="icon-bar"></span>
+              		<span class="icon-bar"></span>
+            	</button>
+            	<a class="navbar-brand" href="home.html"><img src="img/logo.png" height="50px" width="100px"></a>
+          	</div>
+        	<div id="navbar" class="navbar-collapse collapse">
+            	<ul class="nav navbar-nav navbar-right">
+                	<li><a href="#" class="btn btn-success btn-lg active" id="personal" role="button">Personal Info &raquo;</a></li>
+            	</ul>
+            <!-- <form class="navbar-form navbar-right">
+              <div class="form-group">
+                <input type="text" placeholder="Username" class="form-control">
+              </div>
+              <div class="form-group">
+                <input type="password" placeholder="Password" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-success">Sign in</button>
+            </form> -->
+        	</div><!--/.navbar-collapse -->
+        </div>
+    </nav>
+  
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+          	<h1>Hello, Anonym!</h1>
+          	<p>This is an anonymous forum designed by PKU students.</p>
+          	<p><a href="about.html" class="button button-glow button-rounded button-raised button-primary">Learn more &raquo;</a></p>
+        </div>
+    </div>
+	
+    <div class="container">
+		<table class="table table-hover" id="table">
+			<caption><h2>Trending</h2></caption>
+				<thead>
+					<tr class="warning row">
+						<th class="col-md-7">Thread</th>
+						<th class="col-md-1">Stat</th>
+						<th class="col-md-2">Post</th>
+						<th class="col-md-2">Last</th>
+					</tr>
+				</thead>
+					<tbody id="tbody">
+					  <!-- <tr class="row">
+						<th class="col-md-7">
+							<p><a href="./tid?" class="thread-title">【FOR 葛格】主人，精致的宠物猪猪，要不要领养一只</a></p>
+							<p class="thread-text">这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？...</p>
+						</th>
+						<td class="col-md-1 thread-number">
+							<p><i class="glyphicon glyphicon-plus"></i> 79</p>
+							<p><i class="glyphicon glyphicon-eye-open"></i> 322</p>
+						</td>
+						<td class="col-md-2">
+							<p class="thread-post"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-post"> dorisxiaoyao</a></p>
+							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-20 16:40:23</p>
+						</td>
+						<td class="col-md-2">
+							<p class="thread-last"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-last"> dorisxiaoyao</a></p>
+							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-21 00:38:11</p>
+						</td>
+					</tr> -->
+					</tbody>
+			  </table>
+        <hr>
+        <footer>
+          	<p>&copy; 2018 PKU CS.</p>
+        </footer>
+	</div> <!-- /container -->
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="js/jquery.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="js/bootstrapPager.js"></script>
+    <script>
+
+		function getUrlParam(name) {   
+				var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象   
+				var r = window.location.search.substr(1).match(reg);  //匹配目标参数   
+				if (r!=null) return unescape(r[2]);   
+				return null; //返回参数值   
+		} 
+
+		$(function(){ // all be ready
+			var page_name = 'page';
+			var page_size = 2;
+			var page_num = getUrlParam(page_name); // 获取page_num，便于分页
+			if (page_num == null) page_num = 1;
+			console.log(page_num);
+
+			$.ajax({
+				url:"json/home.json",  // home.html?page=page_num
+				beforeSend: function(xhr){  // te be commented
+					if (xhr.overrideMimeType) {	
+						xhr.overrideMimeType("application/json");
+					}
+				},
+				type:"get",
+				dataType:"json",
+				contentType: "application/json", 
+				success: function(result) {
+					console.log(result);  
+					if (result.status == 1) {
+						alert('json status false');
+						return;
+					}
+					var thread_array = result.data;
+					var x = Pager({
+						totalCount: thread_array.length, //总条数
+						pageSize: page_size,    //每页显示6条内容，默认10
+						buttonSize: 6,   //显示6个按钮，默认10
+						pageParam: page_name,   //页码的参数名默认为'page'
+						className:'pagination',    //分页的样式
+						prevButton:'Prev',       //上一页按钮
+						nextButton:'Next',       //下一页按钮
+						firstButton:'First',      //第一页按钮
+						lastButton:'Last',       //最后一页按钮
+					});
+					$("#table").after(x);
+					for (var i = (page_num - 1) * page_size; i < thread_array.length && i < page_num * page_size; i += 1) {
+						$("#tbody").append(
+							"<tr class='row'>" +
+							"<th class='col-md-7'>" + 
+							"<p><a href='thread.html?tid=" + thread_array[i].tid + "' class='thread-title'>" + thread_array[i].title + "</a></p>" +
+							"<p class='thread-text'>" + thread_array[i].text + "</p></th>" + 
+							"<td class='col-md-1 thread-number'>" +
+							"<p><i class='glyphicon glyphicon-plus'></i> "+ thread_array[i].re +"</p>" + 
+							"<p><i class='glyphicon glyphicon-eye-open'></i> "+ thread_array[i].view +"</p></td>" + 
+							"<td class='col-md-2'>" + 
+							"<p class='thread-post'><i class='glyphicon glyphicon-user'></i><a href='user.html?uid=" + thread_array[i].pid + "' class='thread-post'> " + thread_array[i].pid + "</a></p>" + 
+							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].post + "</p></td>" +
+							"<td class='col-md-2'>" + 
+							"<p class='thread-last'><i class='glyphicon glyphicon-user'></i><a href='user.html?uid=" + thread_array[i].lid + "' class='thread-last'> " + thread_array[i].lid + "</a></p>" + 
+							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].last + "</p></td>" + 
+							"</tr>");
+					}
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+				},
+			})
+
+		});  
+    </script>
+
+  </body>
+</html>
