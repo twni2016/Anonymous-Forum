@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+    <title>Anonymous Forum Home</title>
+ 
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/home.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+
+    <script src="js/jquery.js"></script>
+    <script>
+        var t = {
+            'status': 0,
+            'title': 'the very first thread',
+            'data': [
+                {
+                    'text': 'a',
+                    'time': '1',
+                    'id': '1',
+                    'fid': 1
+                },
+                {
+                    'text': 'b', 
+                    'time': '2', 
+                    'id': '2', 
+                    'fid': 2
+                },
+                {
+                    'text': 'v',
+                    'time': '3', 
+                    'id': '1',
+                    'fid': 3
+                }
+            ]
+        }
+
+        var id_list = [];
+        var name_list = ['alice', 'bob', 'caaa', 'david', 'emily'];
+
+        $(document).ready(function load() {
+            var url = document.URL;
+            var sp = url.split('/');
+            var len = sp.length;
+            // 预期sp[len-2]应该是thread的tid部分 sp[len-1]应该是page部分
+
+
+            params = {
+                'tid': sp[len - 2],
+                'page': sp[len - 1]
+            }
+
+            $.get('http://httpbin.org/get', params, function (obj) {
+                obj = t;
+                if (obj['status'] == 1)
+                    alert('load failed!');
+                console.log(obj['status']);
+
+                title = document.getElementById("title-container");
+                var nt = document.createElement('h3');
+                nt.textContent = obj['title'];
+                title.append(nt);
+                
+                // old version
+
+                // panel = document.getElementById('floors');
+                // for (i = 0; i < obj['data'].length; ++i)
+                // {
+                //     var d = document.createElement('div');
+                //     if (!(obj['data'][i]['id'] in id_list))
+                //         id_list.push(obj['data'][i]['id']);
+
+                //     d.textContent = name_list[id_list.indexOf(obj['data'][i]['id'])] + obj['data'][i]['text'];
+                //     panel.append(d);
+                // }
+
+
+                tbody = document.getElementById('tbody');
+                for (i = 0; i < obj['data'].length; ++i)
+                {
+                    var d = document.createElement('tr');
+                    d.className = 'row';
+                    d.name = 'floor';
+                    if (!(obj['data'][i]['id'] in id_list))
+                        id_list.push(obj['data'][i]['id']);
+                    
+                    var ucol = document.createElement('th');
+                    ucol.className = 'col-md-2';
+                    var uname = document.createElement('p');
+                    uname.textContent = name_list[id_list.indexOf(obj['data'][i]['id'])];
+                    ucol.appendChild(uname);
+
+                    var tcol = document.createElement('th');
+                    tcol.className = 'col-md-8';
+                    var ttext = document.createElement('p');
+                    ttext.textContent = obj['data'][i]['text'];
+                    var rdiv = document.createElement('div');
+                    rdiv.className = 'comment-wrap';
+                    var re_input = document.createElement('input');
+                    var re_button = document.createElement('button');
+                    re_button.textContent = 'send';
+                    rdiv.appendChild(re_input);
+                    rdiv.appendChild(re_button);
+
+                    tcol.appendChild(ttext);
+                    tcol.appendChild(document.createElement('br'));
+                    tcol.appendChild(rdiv);
+
+                    var timecol = document.createElement('th');
+                    timecol.className = 'col-md-1';
+                    var ttime = document.createElement('p');
+                    ttime.textContent = obj['data'][i]['time'];
+                    timecol.appendChild(ttime);
+
+                    var bcol = document.createElement('th');
+                    bcol.className = 'col-md-1';
+                    var bbtn = document.createElement('button');
+                    bbtn.name ='reply-btn';
+                    bbtn.textContent = 'reply';
+                    bcol.appendChild(bbtn);
+
+                    d.appendChild(ucol);
+                    d.appendChild(tcol);
+                    d.appendChild(timecol);
+                    d.appendChild(bcol);
+
+                    tbody.append(d);
+                }
+                
+                $('.comment-wrap').hide();
+                $('[name="reply-btn"]').click(function() {
+                    var $commentWrap = $(this).parent().parent().children('.col-md-8').children('.comment-wrap');
+                    var $tohide = $(this).parent().parent().siblings().children('.col-md-8').find('.comment-wrap.show');
+                    console.log($tohide);
+                    $tohide.hide();
+                    $tohide.removeClass('show');
+                    // $tohide.children().hide();
+
+                    if ($commentWrap.hasClass('show')) {
+                        $commentWrap.removeClass('show').hide();
+                        console.log("2");
+                    } else {
+                        $commentWrap.addClass('show').show();
+                        console.log("3");
+                    }
+                });
+            })
+
+        })
+    </script>
+
+    <script>
+
+    </script>
+
+</head>
+
+<body>
+    <!-- 在body处应该先建立基本的网页框架 
+    然后调用js函数向server请求数据
+    用获得的数据构建帖子内容 -->
+
+    <!-- 这部分应该是头部 -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="home.html">
+                    <img src="img/logo.png" height="50px" width="100px">
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" class="btn btn-success btn-lg active" id="personal" role="button">Personal Info &raquo;</a>
+                    </li>
+                </ul>
+                <!-- <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" placeholder="Username" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Sign in</button>
+                </form> -->
+            </div>
+            <!--/.navbar-collapse -->
+        </div>
+    </nav>
+
+
+    <!-- 这部分应该是标题 -->
+    <div class="jumbotron">
+        <div class="container" id="title-container">
+          	<!-- <h1>Hello, Anonym!</h1> -->
+          	<!-- <h3> The very first thread... </h3> -->
+          	<!-- <p><a href="about.html" class="button button-glow button-rounded button-raised button-primary">Learn more &raquo;</a></p> -->
+        </div>
+    </div>
+
+
+    <!-- 这部分应该是正文 -->
+
+    <div id="floors">
+
+    </div>
+
+
+    <div class="container">
+		<table class="table table-hover" id="table">
+			<!-- <caption><h2>Trending</h2></caption> -->
+				<thead>
+					<tr class="warning row">
+						<th class="col-md-2">User</th>
+						<th class="col-md-8">Text</th>
+						<th class="col-md-1">Time</th>
+						<th class="col-md-1">Reply</th>
+					</tr>
+				</thead>
+					<tbody id="tbody">
+					  <!-- <tr class="row">
+						<th class="col-md-7">
+							<p><a href="./tid?" class="thread-title">【FOR 葛格】主人，精致的宠物猪猪，要不要领养一只</a></p>
+							<p class="thread-text">这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？...</p>
+						</th>
+						<td class="col-md-1 thread-number">
+							<p><i class="glyphicon glyphicon-plus"></i> 79</p>
+							<p><i class="glyphicon glyphicon-eye-open"></i> 322</p>
+						</td>
+						<td class="col-md-2">
+							<p class="thread-post"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-post"> dorisxiaoyao</a></p>
+							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-20 16:40:23</p>
+						</td>
+						<td class="col-md-2">
+							<p class="thread-last"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-last"> dorisxiaoyao</a></p>
+							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-21 00:38:11</p>
+						</td>
+					</tr> -->
+					</tbody>
+			  </table>
+        <hr>
+        <footer>
+          	<p>&copy; 2018 PKU CS.</p>
+        </footer>
+	</div> <!-- /container -->
+
+
+
+</body>
+
