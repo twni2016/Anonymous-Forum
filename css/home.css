@@ -44,3 +44,11 @@ thead {
     color: #00AA00;
     font-weight: bold;
 }
+
+.form-group{
+    font-size: large;
+}
+
+.form-control{
+    font-size: large;
+}

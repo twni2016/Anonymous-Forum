@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="home">
+    <meta name="author" content="NI Tianwei">
     <link rel="icon" href="img/favicon.ico">
     <title>Anonymous Forum Home</title>
  
@@ -57,35 +57,47 @@
     <div class="container">
 		<table class="table table-hover" id="table">
 			<caption><h2>Trending</h2></caption>
-				<thead>
-					<tr class="warning row">
-						<th class="col-md-7">Thread</th>
-						<th class="col-md-1">Stat</th>
-						<th class="col-md-2">Post</th>
-						<th class="col-md-2">Last</th>
-					</tr>
-				</thead>
-					<tbody id="tbody">
-					  <!-- <tr class="row">
-						<th class="col-md-7">
-							<p><a href="./tid?" class="thread-title">【FOR 葛格】主人，精致的宠物猪猪，要不要领养一只</a></p>
-							<p class="thread-text">这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？...</p>
-						</th>
-						<td class="col-md-1 thread-number">
-							<p><i class="glyphicon glyphicon-plus"></i> 79</p>
-							<p><i class="glyphicon glyphicon-eye-open"></i> 322</p>
-						</td>
-						<td class="col-md-2">
-							<p class="thread-post"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-post"> dorisxiaoyao</a></p>
-							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-20 16:40:23</p>
-						</td>
-						<td class="col-md-2">
-							<p class="thread-last"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-last"> dorisxiaoyao</a></p>
-							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-21 00:38:11</p>
-						</td>
-					</tr> -->
-					</tbody>
-			  </table>
+			<thead>
+				<tr class="warning row">
+					<th class="col-md-7">Thread</th>
+					<th class="col-md-1">Stat</th>
+					<th class="col-md-2">Post</th>
+					<th class="col-md-2">Last</th>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+			  	<!-- <tr class="row">
+				<th class="col-md-7">
+					<p><a href="./tid?" class="thread-title">【FOR 葛格】主人，精致的宠物猪猪，要不要领养一只</a></p>
+					<p class="thread-text">这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？...</p>
+				</th>
+				<td class="col-md-1 thread-number">
+					<p><i class="glyphicon glyphicon-plus"></i> 79</p>
+					<p><i class="glyphicon glyphicon-eye-open"></i> 322</p>
+				</td>
+				<td class="col-md-2">
+					<p class="thread-post"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-post"> dorisxiaoyao</a></p>
+					<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-20 16:40:23</p>
+				</td>
+				<td class="col-md-2">
+					<p class="thread-last"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-last"> dorisxiaoyao</a></p>
+					<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-21 00:38:11</p>
+				</td>
+				</tr> -->
+			</tbody>
+		</table>
+		<form>
+			<h2>Post</h2>
+			<div class="form-group">
+			  	<label>Title</label>
+			  	<input type="text" class="form-control" placeholder="Title" id="post-title">
+			</div>
+			<div class="form-group">
+				<label>Text</label>
+				<textarea class="form-control" rows="5" placeholder="Please input text ..." id="post-text"></textarea>
+			</div>
+			<button type="submit" class="button button-glow button-rounded button-highlight">Submit &raquo;</button>
+		</form>
         <hr>
         <footer>
           	<p>&copy; 2018 PKU CS.</p>
@@ -99,18 +111,18 @@
     <script>
 
 		function getUrlParam(name) {   
-				var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象   
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象   
 				var r = window.location.search.substr(1).match(reg);  //匹配目标参数   
-				if (r!=null) return unescape(r[2]);   
+				if (r != null) return unescape(r[2]);   
 				return null; //返回参数值   
 		} 
 
 		$(function(){ // all be ready
+
 			var page_name = 'page';
 			var page_size = 2;
 			var page_num = getUrlParam(page_name); // 获取page_num，便于分页
 			if (page_num == null) page_num = 1;
-			console.log(page_num);
 
 			$.ajax({
 				url:"json/home.json",  // home.html?page=page_num
@@ -123,7 +135,7 @@
 				dataType:"json",
 				contentType: "application/json", 
 				success: function(result) {
-					console.log(result);  
+					// console.log(result);  
 					if (result.status == 1) {
 						alert('json status false');
 						return;
@@ -141,7 +153,7 @@
 						lastButton:'Last',       //最后一页按钮
 					});
 					$("#table").after(x);
-					for (var i = (page_num - 1) * page_size; i < thread_array.length && i < page_num * page_size; i += 1) {
+					for (var i = (page_num - 1) * page_size; i < thread_array.length && i < page_num * page_size; i += 1) { // 需要修改，后端分页
 						$("#tbody").append(
 							"<tr class='row'>" +
 							"<th class='col-md-7'>" + 
@@ -165,6 +177,34 @@
 					alert(textStatus);
 				},
 			})
+
+			$("form").submit(function(result) {
+    			var new_post = {
+					"title": $("#post-title").val(),
+					"text": $("#post-text").val(),
+					"pid": "pid",  // needs server
+					"time": Date()
+				}
+				console.log(new_post);
+				$.ajax({
+					type: "get",
+					url: "thread?", // url?
+					data: new_post,
+					dataType: 'json',
+					contentType: 'application/json; charset=utf-8',
+					success: function (result) {
+						if (result.d == "1") {
+							console.log("服务器接收成功！");
+						}
+						else {
+							console.log("服务器接收数据失败！");
+						}
+					},
+					error: function () {
+						console.log("程序运行出错！");
+					}
+            	});
+  			});
 
 		});  
     </script>
