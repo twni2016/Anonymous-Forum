@@ -14,7 +14,9 @@
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/home.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+    <link rel="stylesheet" type="text/css" href="css/widearea.css" />
 
+    <script src="js/widearea.js"></script>
     <script src="js/jquery.js"></script>
     <script>
         var t = {
@@ -61,7 +63,7 @@
                 obj = t;
                 if (obj['status'] == 1)
                     alert('load failed!');
-                console.log(obj['status']);
+                // console.log(obj['status']);
 
                 title = document.getElementById("title-container");
                 var nt = document.createElement('h3');
@@ -103,9 +105,14 @@
                     ttext.textContent = obj['data'][i]['text'];
                     var rdiv = document.createElement('div');
                     rdiv.className = 'comment-wrap';
-                    var re_input = document.createElement('input');
+                    var re_input = document.createElement('textarea');
                     var re_button = document.createElement('button');
+                    re_input.name = "send-text";
+                    re_input.className = "widearea";
+                    re_input.style = "width:550px; height:180px";
                     re_button.textContent = 'send';
+                    re_button.className = "button button-primary button-rounded button-small";
+                    re_button.name = 'send-btn';
                     rdiv.appendChild(re_input);
                     rdiv.appendChild(re_button);
 
@@ -122,6 +129,7 @@
                     var bcol = document.createElement('th');
                     bcol.className = 'col-md-1';
                     var bbtn = document.createElement('button');
+                    bbtn.className = "button button-3d button-primary button-rounded";
                     bbtn.name ='reply-btn';
                     bbtn.textContent = 'reply';
                     bcol.appendChild(bbtn);
@@ -138,21 +146,31 @@
                 $('[name="reply-btn"]').click(function() {
                     var $commentWrap = $(this).parent().parent().children('.col-md-8').children('.comment-wrap');
                     var $tohide = $(this).parent().parent().siblings().children('.col-md-8').find('.comment-wrap.show');
-                    console.log($tohide);
+                    // console.log($tohide);
                     $tohide.hide();
                     $tohide.removeClass('show');
                     // $tohide.children().hide();
 
                     if ($commentWrap.hasClass('show')) {
                         $commentWrap.removeClass('show').hide();
-                        console.log("2");
+                        // console.log("2");
                     } else {
                         $commentWrap.addClass('show').show();
-                        console.log("3");
+                        // console.log("3");
                     }
                 });
-            })
 
+                $('[name="send-btn"]').click(function() {
+                    var $text = $(this).siblings("[name='send-text']");
+                    console.log($text.val());
+                    params = {
+
+                    };
+
+                });
+
+
+            })
         })
     </script>
 
