@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <meta name="description" content="home">
+    <meta name="description" content="user">
     <meta name="author" content="NI Tianwei">
     <link rel="icon" href="img/favicon.ico">
-    <title>Anonymous Forum Home</title>
+    <title>Anonymous Forum User</title>
  
     <!-- Bootstrap core CSS -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/home.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+	<link href="css/home.css" rel="stylesheet">
+	<link href="css/user.css" rel="stylesheet">
 
 	</head>
   	<body>
@@ -30,9 +31,8 @@
           	</div>
         	<div id="navbar" class="navbar-collapse collapse">
             	<ul class="nav navbar-nav navbar-right">
-					<li><a href="user.html" class="btn btn-success btn-lg active" id="personal" role="button">Personal Info &raquo;</a></li>
-					<!-- href = "user.html?uid=xxx" -->
-            	</ul> 
+                	<li><a href="home.html" class="btn btn-danger btn-lg active" id="home" role="button">Home &raquo;</a></li>
+            	</ul>
             <!-- <form class="navbar-form navbar-right">
               <div class="form-group">
                 <input type="text" placeholder="Username" class="form-control">
@@ -49,7 +49,7 @@
       <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
         <div class="container">
-          	<h1>Hello, Anonym!</h1>
+          	<h1>Your Posts</h1>
           	<p>This is an anonymous forum designed by PKU students.</p>
           	<p><a href="about.html" class="button button-glow button-rounded button-raised button-primary">Learn more &raquo;</a></p>
         </div>
@@ -57,13 +57,12 @@
 	
     <div class="container">
 		<table class="table table-hover" id="table">
-			<caption><h2>Trending</h2></caption>
 			<thead>
 				<tr class="warning row">
 					<th class="col-md-7">Thread</th>
 					<th class="col-md-1">Stat</th>
 					<th class="col-md-2">Post</th>
-					<th class="col-md-2">Last</th>
+					<th class="col-md-2">You</th>
 				</tr>
 			</thead>
 			<tbody id="tbody">
@@ -81,24 +80,12 @@
 					<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-20 16:40:23</p>
 				</td>
 				<td class="col-md-2">
-					<p class="thread-last"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-last"> dorisxiaoyao</a></p>
+					<p class="thread-you"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-you"> dorisxiaoyao</a></p>
 					<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-21 00:38:11</p>
 				</td>
 				</tr> -->
 			</tbody>
 		</table>
-		<form>
-			<h2>Start A New Post</h2>
-			<div class="form-group">
-			  	<label>Title</label>
-			  	<input type="text" class="form-control" placeholder="Title" id="post-title" required>
-			</div>
-			<div class="form-group">
-				<label>Text</label>
-				<textarea class="form-control" rows="5" placeholder="Please input text ..." id="post-text" required></textarea>
-			</div>
-			<button type="submit" class="button button-glow button-rounded button-highlight">Submit &raquo;</button>
-		</form>
         <hr>
         <footer>
           	<p>&copy; 2018 PKU CS.</p>
@@ -126,7 +113,7 @@
 			if (page_num == null) page_num = 1;
 
 			$.ajax({
-				url:"json/home.json",  // home.html?page=page_num
+				url:"json/user.json",  // home.html?page=page_num
 				beforeSend: function(xhr){  // te be commented
 					if (xhr.overrideMimeType) {	
 						xhr.overrideMimeType("application/json");
@@ -167,8 +154,8 @@
 							"<p class='thread-post'><i class='glyphicon glyphicon-user'></i><a href='user.html?uid=" + thread_array[i].pid + "' class='thread-post'> " + thread_array[i].pid + "</a></p>" + 
 							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].post + "</p></td>" +
 							"<td class='col-md-2'>" + 
-							"<p class='thread-last'><i class='glyphicon glyphicon-user'></i><a href='user.html?uid=" + thread_array[i].lid + "' class='thread-last'> " + thread_array[i].lid + "</a></p>" + 
-							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].last + "</p></td>" + 
+							"<p class='thread-you'><i class='glyphicon glyphicon-user'></i> You</a></p>" + 
+							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].time + "</p></td>" + 
 							"</tr>");
 					}
 				},
@@ -179,37 +166,7 @@
 				},
 			})
 
-			$("form").submit(function(result) {
-    			var new_post = {
-					"title": $("#post-title").val(),
-					"text": $("#post-text").val(),
-					"pid": "pid",  // needs server
-					"time": Date()
-				}
-				console.log(new_post);
-				$.ajax({
-					type: "get",
-					url: "thread.html?post", // url?
-					data: new_post,
-					dataType: 'json',
-					contentType: 'application/json; charset=utf-8',
-					success: function (result) {
-						if (result.status == 0) {
-							console.log("服务器接收成功！");
-							window.location.href = "thread.html?tid=" + result.tid; // redirect
-						}
-						else {
-							console.log("服务器接收数据失败！");
-							window.location.reload();
-						}
-					},
-					error: function () {
-						console.log("程序运行出错！");
-						window.location.reload();
-					}
-            	});
-			  });
-	}); 
+		});  
     </script>
 
   </body>
