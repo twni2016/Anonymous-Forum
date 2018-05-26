@@ -182,8 +182,35 @@
                     var $text = $(this).siblings("[name='send-text']");
                     console.log($text.val());
                     params = {
-
+                        'userid': 'Anonymous',
+                        'text': $text.val(),
+                        'tid': tid
                     };
+
+                    $.get('/send_reply/', params, function(ret){
+                        if(ret == "0") {
+                            alert("Sent successfully!");
+                            window.location.reload();
+                        }
+                    })
+                });
+
+                
+                $('[name="add-button"]').click(function() {
+                    var $text = $(this).siblings("[name='add-input']");
+                    console.log($text.val());
+                    params = {
+                        'userid': 'Anonymous',
+                        'text': $text.val(),
+                        'tid': tid
+                    };
+
+                    $.get('/send_reply/', params, function(ret){
+                        if(ret == "0") {
+                            alert("Sent successfully!");
+                            window.location.reload();
+                        }
+                    })
 
                 });
 
