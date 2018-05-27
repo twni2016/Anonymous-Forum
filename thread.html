@@ -108,8 +108,10 @@
                     var re_input = document.createElement('textarea');
                     var re_button = document.createElement('button');
                     re_input.name = "send-text";
-                    re_input.className = "widearea";
-                    re_input.style = "width:550px; height:180px";
+                    re_input.className = "form-control";
+                    // re_input.style = "width:550px; height:180px";
+                    re_input.rows = 5;
+                    re_input.textContent = "reply to " + uname.textContent + ": ";
                     re_button.textContent = 'send';
                     re_button.className = "button button-primary button-rounded button-small";
                     re_button.name = 'send-btn';
@@ -144,8 +146,9 @@
                 // var add_div = document.createElement('div');
                 var add_input = document.createElement('textarea');
                 var add_button = document.createElement('button');
-                add_input.className = "widearea";
-                add_input.style = "width:700px; height:180px";
+                add_input.className = "form-control";
+                // add_input.style = "width:700px; height:180px";
+                add_input.rows = 7;
                 add_button.textContent = 'send';
                 add_button.className = "button button-primary button-rounded button-small";
                 add_button.name = 'add-button';
@@ -315,7 +318,7 @@
 					</tr> -->
 					</tbody>
               </table>
-        <div id="add-div" style="text-align: center">
+        <div id="add-div">
             <!-- <p>Reply to this thread:</p> -->
             
         </div>
