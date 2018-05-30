@@ -13,7 +13,8 @@
     <!-- Bootstrap core CSS -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/home.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+	<link href="css/buttons.css" rel="stylesheet">
+	<link href="css/fileinput.css" rel="stylesheet">
 
 	</head>
   	<body>
@@ -87,7 +88,7 @@
 				</tr> -->
 			</tbody>
 		</table>
-		<form>
+		<form enctype="multipart/form-data">
 			<h2>Start A New Post</h2>
 			<div class="form-group">
 			  	<label>Title</label>
@@ -95,10 +96,17 @@
 			</div>
 			<div class="form-group">
 				<label>Text</label>
-				<textarea class="form-control" rows="5" placeholder="Please input text ..." id="post-text" required></textarea>
+				<textarea class="form-control" rows="8" placeholder="Please input text ..." id="post-text" required></textarea>
 			</div>
+			<input id="post-file" name="file" type="file" multiple>
+			<!-- <form id="form1">
+				图片id<input type="text" name="id" id="picid" >
+				图片名称:<input type="text" name="picName" >  
+				<input type="button" id="savePic">保存</button>          
+			</form> -->
 			<button type="submit" class="button button-glow button-rounded button-highlight">Submit &raquo;</button>
 		</form>
+
         <hr>
         <footer>
           	<p>&copy; 2018 PKU CS.</p>
@@ -109,6 +117,7 @@
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="js/bootstrapPager.js"></script>
+	<script src="js/fileinput.js"></script>
     <script>
 
 		function getUrlParam(name) {   
@@ -179,7 +188,91 @@
 				},
 			})
 
+			$('#post-file').fileinput({//初始化上传文件框
+			        showUpload : false,
+			        showRemove : false,
+			        uploadAsync: true,
+			        uploadLabel: "Upload",//设置上传按钮的汉字
+			        uploadClass: "btn btn-primary",//设置上传按钮样式
+			        showCaption: false,//是否显示标题
+			        // language: "",//配置语言
+			        uploadUrl: "BannerPicAction!addPicture.action", 
+			        maxFileSize : 0,
+			        maxFileCount: 5,/*允许最大上传数，可以多个，当前设置单个*/
+			        enctype: 'multipart/form-data',
+			        //allowedPreviewTypes : [ 'image' ], //allowedFileTypes: ['image', 'video', 'flash'],
+			        // allowedFileExtensions : ["jpg", "png","gif"],/*上传文件格式*/
+			        msgFilesTooMany: "Number of your files ({n}) is over maximum of ({m}).",
+			        dropZoneTitle: "Please Drag your files here", 
+			        dropZoneClickTitle: " or Click here to upload your files",
+			        showBrowse: false,
+			        browseOnZoneClick: true,
+			        slugCallback : function(filename) {
+			            return filename.replace('(', '_').replace(']', '_');
+			        }
+			    });
+			    //上传文件成功，回调函数 
+			    $('#post-file').on("filepreupload", function(event, data, previewId, index) {     //上传中  
+			                var form = data.form, files = data.files, extra = data.extra,  
+			                response = data.response, reader = data.reader;  
+			                console.log('文件正在上传',data);
+			                console.log(event);
+			                console.log(previewId);
+			                console.log(index);
+			    }); 
+			    $('#post-file').on("fileuploaded", function(event, data, previewId, index) {
+			    console.log("hello")
+			    var result = data.response; //后台返回的json
+			    //console.log(result.status);
+			    //console.log(result.id);
+			    $('#picid').val(result.id);//拿到后台传回来的id，给图片的id赋值序列化表单用
+			    //如果是上传多张图
+			    /*
+			    //计数标记，用于确保全部图片都上传成功了，再提交表单信息
+			    var fileCount = $('#post-file').fileinput('getFilesCount');
+			    if(fileCount==1){
+			    $.ajax({//上传文件成功后再保存图片信息
+			        url:'BannerPicAction!savaForm.action',
+			        data:$('#form1').serialize(),//form表单的值
+			        success:function(data,status){
+			            ...
+			        },
+			        cache:false,                    //不缓存
+			    });
+			    }
+			    */
+			    $.ajax({//上传文件成功后再保存图片信息
+			        url:'BannerPicAction!savaForm.action',
+			        type:'post',
+			        dataType:'json',
+			        data:$('#form1').serialize(),//form表单的值
+			        success:function(data,status){
+			            if (status == "success") {
+						
+			                if(data.status == "success"){//提交成功
+							
+			                    //跳转回添加页面
+							
+			                }else{
+			                    alert("添加失败,编码的错误!");
+			                }
+						
+			                } else {
+			                    alert("添加失败,ajax请求返回失败!");
+			            }
+			        },
+			        cache:false,                    //不缓存
+			    });
+			    });
+			
+			    // $('#savePic').on('click',function (){// 提交图片信息 //
+			    //     //先上传文件，然后在回调函数提交表单
+			    //     $('#post-file').fileinput('upload');
+				
+				// });  
+				
 			$("form").submit(function(result) {
+				$('#post-file').fileinput('upload');
     			var new_post = {
 					"title": $("#post-title").val(),
 					"text": $("#post-text").val(),
