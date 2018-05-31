@@ -15,9 +15,11 @@
     <link href="css/home.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/buttons.css" />
     <link rel="stylesheet" type="text/css" href="css/widearea.css" />
+    <link rel="stylesheet" type="text/css"href="css/fileinput.css" >
 
     <script src="js/widearea.js"></script>
     <script src="js/jquery.js"></script>
+    <script src="js/fileinput.js"></script>
     <script>
         var t = {
             'status': 0,
@@ -145,10 +147,14 @@
                 }
                 // var add_div = document.createElement('div');
                 var add_input = document.createElement('textarea');
+                var add_input_file = document.createElement('input');
                 var add_button = document.createElement('button');
                 add_input.className = "form-control";
                 // add_input.style = "width:700px; height:180px";
                 add_input.rows = 7;
+                add_input_file.className = 'file';
+                add_input_file.type = 'file';
+                // <input id="post-file" name="file" type="file" multiple>
                 add_button.textContent = 'send';
                 add_button.className = "button button-primary button-rounded button-small";
                 add_button.name = 'add-button';
@@ -158,6 +164,7 @@
                 // add_div.appendChild(add_button);
                 add_div = document.getElementById("add-div");
                 add_div.append(add_input);
+                add_div.append(add_input_file);
                 add_div.append(add_button);
                 
 
@@ -322,6 +329,7 @@
             <!-- <p>Reply to this thread:</p> -->
             
         </div>
+
         <hr>
         <footer>
           	<p>&copy; 2018 PKU CS.</p>

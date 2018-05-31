@@ -10,7 +10,9 @@
             "last": "2018-05-21 00:38:11",
             "pid": "dorisxiaoyao",
             "lid": "dorisxiaoyao",
-            "tid": "16421013"
+            "tid": "16421013",
+            "has_file": true,
+            "file_url": "img/bbs.png"
         },
         {
             "title": "【FOR 葛格2】主人，精致的宠物猪猪，要不要领养一只",
@@ -21,7 +23,9 @@
             "last": "2018-05-21 00:38:11",
             "pid": "dorisxiaoyao",
             "lid": "dorisxiaoyao",
-            "tid": "16421013"
+            "tid": "16421013",
+            "has_file": true,
+            "file_url": "中期报告.pdf"
         },
         {
             "title": "【FOR 葛格3】主人，精致的宠物猪猪，要不要领养一只",
@@ -32,7 +36,9 @@
             "last": "2018-05-21 00:38:11",
             "pid": "dorisxiaoyao",
             "lid": "dorisxiaoyao",
-            "tid": "16421013"
+            "tid": "16421013",
+            "has_file": true,
+            "file_url": "内部文档.md"
         },
         {
             "title": "【FOR 葛格4】主人，精致的宠物猪猪，要不要领养一只",
@@ -43,7 +49,9 @@
             "last": "2018-05-21 00:38:11",
             "pid": "dorisxiaoyao",
             "lid": "dorisxiaoyao",
-            "tid": "16421013"
+            "tid": "16421013",
+            "has_file": true,
+            "file_url": "img/realshort.mp4"
         },
         {
             "title": "【FOR 葛格5】主人，精致的宠物猪猪，要不要领养一只",
@@ -54,7 +62,9 @@
             "last": "2018-05-21 00:38:11",
             "pid": "dorisxiaoyao",
             "lid": "dorisxiaoyao",
-            "tid": "16421013"
+            "tid": "16421013",
+            "has_file": false,
+            "file_url": "img/bbs.png"
         }
     ]
 }

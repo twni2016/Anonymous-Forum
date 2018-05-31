@@ -130,7 +130,7 @@
 		$(function(){ // all be ready
 
 			var page_name = 'page';
-			var page_size = 2;
+			var page_size = 6;
 			var page_num = getUrlParam(page_name); // 获取page_num，便于分页
 			if (page_num == null) page_num = 1;
 
@@ -163,13 +163,19 @@
 						lastButton:'Last',       //最后一页按钮
 					});
 					$("#table").after(x);
+					var html_code = "";
 					for (var i = (page_num - 1) * page_size; i < thread_array.length && i < page_num * page_size; i += 1) { // 需要修改，后端分页
-						$("#tbody").append(
+						html_code +=
 							"<tr class='row'>" +
 							"<th class='col-md-7'>" + 
 							"<p><a href='thread.html?tid=" + thread_array[i].tid + "' class='thread-title'>" + thread_array[i].title + "</a></p>" +
-							"<p class='thread-text'>" + thread_array[i].text + "</p></th>" + 
-							"<td class='col-md-1 thread-number'>" +
+							"<p class='thread-text'>" + thread_array[i].text + "</p>";
+						if (thread_array[i].has_file)
+							html_code += "<p class='embed-responsive embed-responsive-16by9'>" +
+  										 "<iframe class='embed-responsive-item' src='" + thread_array[i].file_url +
+										 "'allow='encrypted-media' allowfullscreen></iframe></p>";
+						html_code +=
+							"</th><td class='col-md-1 thread-number'>" +
 							"<p><i class='glyphicon glyphicon-plus'></i> "+ thread_array[i].re +"</p>" + 
 							"<p><i class='glyphicon glyphicon-eye-open'></i> "+ thread_array[i].view +"</p></td>" + 
 							"<td class='col-md-2'>" + 
@@ -178,8 +184,9 @@
 							"<td class='col-md-2'>" + 
 							"<p class='thread-last'><i class='glyphicon glyphicon-user'></i> " + thread_array[i].lid + "</p>" + 
 							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].last + "</p></td>" + 
-							"</tr>");
+							"</tr>";
 					}
+					$("#tbody").append(html_code);
 				},
 				error: function(XMLHttpRequest, textStatus, errorThrown) {
 					alert(XMLHttpRequest.status);
