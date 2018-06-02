@@ -20,31 +20,15 @@
     <script src="js/widearea.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/fileinput.js"></script>
+    <script src="js/bootstrapPager.js"></script>
     <script>
-        var t = {
-            'status': 0,
-            'title': 'the very first thread',
-            'data': [
-                {
-                    'text': 'a',
-                    'time': '1',
-                    'id': '1',
-                    'fid': 1
-                },
-                {
-                    'text': 'b', 
-                    'time': '2', 
-                    'id': '2', 
-                    'fid': 2
-                },
-                {
-                    'text': 'v',
-                    'time': '3', 
-                    'id': '1',
-                    'fid': 3
-                }
-            ]
-        }
+
+var tid = 12;
+
+var t = { 'status': 0, 'title': 'the very first thread', 'data': [ { 'text': 'a', 'time': '1', 'id': '1', 'fid': 1 }, {
+'text': 'b', 'time': '2', 'id': '2', 'fid': 2 }, { 'text': 'v', 'time': '3', 'id': '1', 'fid': 3 }, { 'text': 'a', 'time':
+4, 'id': '3', 'fid': 4 }, { 'text': 'a', 'time': 5, 'id': '3', 'fid': 5 }, { 'text': 'b', 'time': 6, 'id': '4', 'fid': 6
+}, { 'text': 'b', 'time': 6, 'id': '4', 'fid': 7 } ] }
 
         var id_list = [];
         var name_list = ['alice', 'bob', 'caaa', 'david', 'emily'];
@@ -67,89 +51,112 @@
                     alert('load failed!');
                 // console.log(obj['status']);
 
+                var floor_array = obj.data;
+
                 title = document.getElementById("title-container");
                 var nt = document.createElement('h3');
                 nt.textContent = obj['title'];
                 title.append(nt);
-                
-                // old version
 
-                // panel = document.getElementById('floors');
-                // for (i = 0; i < obj['data'].length; ++i)
-                // {
-                //     var d = document.createElement('div');
-                //     if (!(obj['data'][i]['id'] in id_list))
-                //         id_list.push(obj['data'][i]['id']);
-
-                //     d.textContent = name_list[id_list.indexOf(obj['data'][i]['id'])] + obj['data'][i]['text'];
-                //     panel.append(d);
-                // }
-
+                var x = Pager({
+                    totalCount: floor_array.length, //总条数
+                    pageSize: 6,    //每页显示6条内容，默认10
+                    buttonSize: 6,   //显示6个按钮，默认10
+                    pageParam: 'page',   //页码的参数名默认为'page'
+                    className:'pagination',    //分页的样式
+                    prevButton:'Prev',       //上一页按钮
+                    nextButton:'Next',       //下一页按钮
+                    firstButton:'First',      //第一页按钮
+                    lastButton:'Last',       //最后一页按钮
+                });
+                $("#table").after(x);
 
                 tbody = document.getElementById('tbody');
-                for (i = 0; i < obj['data'].length; ++i)
+                for (i = 0; i < floor_array.length; ++i)
                 {
-                    var d = document.createElement('tr');
-                    d.className = 'row';
-                    d.name = 'floor';
-                    if (!(obj['data'][i]['id'] in id_list))
-                        id_list.push(obj['data'][i]['id']);
+
+                    html_code = "";
+
+                    if (!(floor_array[i]['id'] in id_list))
+                        id_list.push(floor_array[i]['id']);
+
+                    var nickname = name_list[id_list.indexOf(floor_array[i]['id'])];
+                    var floor_text = floor_array[i]['text'];
+                    var floor_time = floor_array[i]['time'];
+
+                    html_code += "<tr class='row'>" + 
+                    "<th class='col-md-2'>" + '<p>' + nickname + '</p></th>' + 
+                    "<th class='col-md-8'>" + '<p>' + floor_text + '</p><br>';
+
+                    html_code += "<div class='comment-wrap'>" + "<textarea name='send-text' class='form-control' rows='5'>reply to " + nickname + ': ' + '</textarea><button class="button button-primary button-rounded button-small" name="send-btn">send</button><div></th>';
+
+                    html_code += "<th class='col-md-1'><p>" + floor_time + '</p></th>';
+
+                    html_code += "<th class='col-md-1'><button class='button button-3d button-primary button-rounded' name='reply-btn'>reply</button></th></tr>"
+
+                    $("#tbody").append(html_code);
+
+
+                    // var d = document.createElement('tr');
+                    // d.className = 'row';
+                    // d.name = 'floor';
                     
-                    var ucol = document.createElement('th');
-                    ucol.className = 'col-md-2';
-                    var uname = document.createElement('p');
-                    uname.textContent = name_list[id_list.indexOf(obj['data'][i]['id'])];
-                    ucol.appendChild(uname);
+                    // var ucol = document.createElement('th');
+                    // ucol.className = 'col-md-2';
+                    // var uname = document.createElement('p');
+                    // uname.textContent = name_list[id_list.indexOf(floor_array[i]['id'])];
+                    // ucol.appendChild(uname);
 
-                    var tcol = document.createElement('th');
-                    tcol.className = 'col-md-8';
-                    var ttext = document.createElement('p');
-                    ttext.textContent = obj['data'][i]['text'];
-                    var rdiv = document.createElement('div');
-                    rdiv.className = 'comment-wrap';
-                    var re_input = document.createElement('textarea');
-                    var re_button = document.createElement('button');
-                    re_input.name = "send-text";
-                    re_input.className = "form-control";
-                    // re_input.style = "width:550px; height:180px";
-                    re_input.rows = 5;
-                    re_input.textContent = "reply to " + uname.textContent + ": ";
-                    re_button.textContent = 'send';
-                    re_button.className = "button button-primary button-rounded button-small";
-                    re_button.name = 'send-btn';
-                    rdiv.appendChild(re_input);
-                    rdiv.appendChild(re_button);
+                    // var tcol = document.createElement('th');
+                    // tcol.className = 'col-md-8';
+                    // var ttext = document.createElement('p');
+                    // ttext.textContent = floor_array[i]['text'];
+                    // var rdiv = document.createElement('div');
+                    // rdiv.className = 'comment-wrap';
+                    // var re_input = document.createElement('textarea');
+                    // var re_button = document.createElement('button');
+                    // re_input.name = "send-text";
+                    // re_input.className = "form-control";
+                    // // re_input.style = "width:550px; height:180px";
+                    // re_input.rows = 5;
+                    // re_input.textContent = "reply to " + uname.textContent + ": ";
+                    // re_button.textContent = 'send';
+                    // re_button.className = "button button-primary button-rounded button-small";
+                    // re_button.name = 'send-btn';
+                    // rdiv.appendChild(re_input);
+                    // rdiv.appendChild(re_button);
 
-                    tcol.appendChild(ttext);
-                    tcol.appendChild(document.createElement('br'));
-                    tcol.appendChild(rdiv);
+                    // tcol.appendChild(ttext);
+                    // tcol.appendChild(document.createElement('br'));
+                    // tcol.appendChild(rdiv);
 
-                    var timecol = document.createElement('th');
-                    timecol.className = 'col-md-1';
-                    var ttime = document.createElement('p');
-                    ttime.textContent = obj['data'][i]['time'];
-                    timecol.appendChild(ttime);
+                    // var timecol = document.createElement('th');
+                    // timecol.className = 'col-md-1';
+                    // var ttime = document.createElement('p');
+                    // ttime.textContent = floor_array[i]['time'];
+                    // timecol.appendChild(ttime);
 
-                    var bcol = document.createElement('th');
-                    bcol.className = 'col-md-1';
-                    var bbtn = document.createElement('button');
-                    bbtn.className = "button button-3d button-primary button-rounded";
-                    bbtn.name ='reply-btn';
-                    bbtn.textContent = 'reply';
-                    bcol.appendChild(bbtn);
+                    // var bcol = document.createElement('th');
+                    // bcol.className = 'col-md-1';
+                    // var bbtn = document.createElement('button');
+                    // bbtn.className = "button button-3d button-primary button-rounded";
+                    // bbtn.name ='reply-btn';
+                    // bbtn.textContent = 'reply';
+                    // bcol.appendChild(bbtn);
 
-                    d.appendChild(ucol);
-                    d.appendChild(tcol);
-                    d.appendChild(timecol);
-                    d.appendChild(bcol);
+                    // d.appendChild(ucol);
+                    // d.appendChild(tcol);
+                    // d.appendChild(timecol);
+                    // d.appendChild(bcol);
 
-                    tbody.append(d);
+                    // tbody.append(d);
                 }
                 // var add_div = document.createElement('div');
                 var add_input = document.createElement('textarea');
                 var add_input_file = document.createElement('input');
                 var add_button = document.createElement('button');
                 add_input.className = "form-control";
+                add_input.name = 'add-input';
                 // add_input.style = "width:700px; height:180px";
                 add_input.rows = 7;
                 add_input_file.className = 'file';
@@ -190,6 +197,11 @@
 
                 $('[name="send-btn"]').click(function() {
                     var $text = $(this).siblings("[name='send-text']");
+                    if ($text.val().length == 0)
+                    {
+                        alert("please enter something!");
+                        return;
+                    }
                     console.log($text.val());
                     params = {
                         'userid': 'Anonymous',
@@ -209,6 +221,11 @@
                 $('[name="add-button"]').click(function() {
                     var $text = $(this).siblings("[name='add-input']");
                     console.log($text.val());
+                    if ($text.val().length == 0)
+                    {
+                        alert("please enter something!");
+                        return;
+                    }
                     params = {
                         'userid': 'Anonymous',
                         'text': $text.val(),
