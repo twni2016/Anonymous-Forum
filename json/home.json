@@ -3,7 +3,7 @@
 	"data":[
         {
             "title": "【FOR 葛格1】主人，精致的宠物猪猪，要不要领养一只",
-            "text": "这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？...",
+            "text": "这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？http://www.dean.pku.edu.cn/ ...",
             "view": 322,
             "re": 79,
             "post": "2018-05-20 16:40:23",
@@ -12,11 +12,11 @@
             "lid": "dorisxiaoyao",
             "tid": "16421013",
             "has_file": true,
-            "file_url": "img/bbs.png"
+            "file_url": ["img/bbs.png", "img/shudong.png", "img/shudong.png"]
         },
         {
             "title": "【FOR 葛格2】主人，精致的宠物猪猪，要不要领养一只",
-            "text": "这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？...",
+            "text": "这是一只有些精致的宠物猪猪，https://bbs.pku.edu.cn/v2/post-read.php?bid=219&threadid=16434992 喜欢打扮自己的男孩子要不要领养一只呢？...",
             "view": 322,
             "re": 79,
             "post": "2018-05-20 16:40:23",
@@ -25,7 +25,7 @@
             "lid": "dorisxiaoyao",
             "tid": "16421013",
             "has_file": true,
-            "file_url": "中期报告.pdf"
+            "file_url": ["中期报告.pdf", "README.md"]
         },
         {
             "title": "【FOR 葛格3】主人，精致的宠物猪猪，要不要领养一只",
@@ -37,8 +37,8 @@
             "pid": "dorisxiaoyao",
             "lid": "dorisxiaoyao",
             "tid": "16421013",
-            "has_file": true,
-            "file_url": "内部文档.md"
+            "has_file": false,
+            "file_url": ["内部文档.md"]
         },
         {
             "title": "【FOR 葛格4】主人，精致的宠物猪猪，要不要领养一只",
@@ -51,7 +51,7 @@
             "lid": "dorisxiaoyao",
             "tid": "16421013",
             "has_file": true,
-            "file_url": "img/realshort.mp4"
+            "file_url": ["img/realshort.mp4"]
         },
         {
             "title": "【FOR 葛格5】主人，精致的宠物猪猪，要不要领养一只",
@@ -63,8 +63,8 @@
             "pid": "dorisxiaoyao",
             "lid": "dorisxiaoyao",
             "tid": "16421013",
-            "has_file": false,
-            "file_url": "img/bbs.png"
+            "has_file": true,
+            "file_url": ["中期报告.pdf", "img/bbs.png"]
         }
     ]
 }

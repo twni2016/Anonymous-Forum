@@ -15,6 +15,7 @@
     <link href="css/home.css" rel="stylesheet">
 	<link href="css/buttons.css" rel="stylesheet">
 	<link href="css/fileinput.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" rel="stylesheet">
 
 	</head>
   	<body>
@@ -107,10 +108,10 @@
 			<button type="submit" class="button button-glow button-rounded button-highlight">Submit &raquo;</button>
 		</form>
 
-        <hr>
+		<hr>
         <footer>
           	<p>&copy; 2018 PKU CS.</p>
-        </footer>
+		</footer>
 	</div> <!-- /container -->
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script src="js/jquery.js"></script>
@@ -118,6 +119,8 @@
 	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="js/bootstrapPager.js"></script>
 	<script src="js/fileinput.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js"></script>
+
     <script>
 
 		function getUrlParam(name) {   
@@ -126,6 +129,13 @@
 				if (r != null) return unescape(r[2]);   
 				return null; //返回参数值   
 		} 
+
+		function linkify(text) {
+			var linkRegex = /(https?:\/\/[^\s]+)/g;
+			return text.replace(linkRegex, function(link) {
+				return '<a href="' + link + '">' + link + '</a>';
+			})
+		}
 
 		$(function(){ // all be ready
 
@@ -170,10 +180,21 @@
 							"<th class='col-md-7'>" + 
 							"<p><a href='thread.html?tid=" + thread_array[i].tid + "' class='thread-title'>" + thread_array[i].title + "</a></p>" +
 							"<p class='thread-text'>" + thread_array[i].text + "</p>";
-						if (thread_array[i].has_file)
-							html_code += "<p class='embed-responsive embed-responsive-16by9'>" +
-  										 "<iframe class='embed-responsive-item' src='" + thread_array[i].file_url +
-										 "'allow='encrypted-media' allowfullscreen></iframe></p>";
+						if (thread_array[i].has_file) {
+							thread_array[i].file_url.forEach(element => {
+								extension = element.split('.').pop();
+								console.log(extension)
+								if (extension == 'jpg' || extension == 'png' || extension == 'gif') {
+									html_code += "<a href='" + element + "'data-toggle='lightbox' data-title='" + element + "'data-gallery='gallery-" + i.toString() + "'>" + 
+    										"<img src='" + element + "'class='img-fluid insert-img'></a>";
+								}
+								else {
+									html_code += "<p><iframe class='insert-file' src='" + element +
+											"'allow='encrypted-media' allowfullscreen></iframe></p>";
+								}
+							});
+						}
+
 						html_code +=
 							"</th><td class='col-md-1 thread-number'>" +
 							"<p><i class='glyphicon glyphicon-plus'></i> "+ thread_array[i].re +"</p>" + 
@@ -186,7 +207,9 @@
 							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].last + "</p></td>" + 
 							"</tr>";
 					}
+					html_code = linkify(html_code); 
 					$("#tbody").append(html_code);
+
 				},
 				error: function(XMLHttpRequest, textStatus, errorThrown) {
 					alert(XMLHttpRequest.status);
@@ -277,7 +300,6 @@
 			    //     $('#post-file').fileinput('upload');
 				
 				// });  
-				
 			$("form").submit(function(result) {
 				$('#post-file').fileinput('upload');
     			var new_post = {
@@ -310,6 +332,11 @@
             	});
 			  });
 	}); 
+
+	$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+                event.preventDefault();
+                $(this).ekkoLightbox();
+    });
     </script>
 
   </body>
