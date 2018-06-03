@@ -20,31 +20,15 @@
     <script src="js/widearea.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/fileinput.js"></script>
+    <script src="js/bootstrapPager.js"></script>
     <script>
-        var t = {
-            'status': 0,
-            'title': 'the very first thread',
-            'data': [
-                {
-                    'text': 'a',
-                    'time': '1',
-                    'id': '1',
-                    'fid': 1
-                },
-                {
-                    'text': 'b', 
-                    'time': '2', 
-                    'id': '2', 
-                    'fid': 2
-                },
-                {
-                    'text': 'v',
-                    'time': '3', 
-                    'id': '1',
-                    'fid': 3
-                }
-            ]
-        }
+
+var tid = 12;
+
+var t = { 'status': 0, 'title': 'the very first thread', 'data': [ { 'text': 'a', 'time': '1', 'id': '1', 'fid': 1 }, {
+'text': 'b', 'time': '2', 'id': '2', 'fid': 2 }, { 'text': 'v', 'time': '3', 'id': '1', 'fid': 3 }, { 'text': 'a', 'time':
+4, 'id': '3', 'fid': 4 }, { 'text': 'a', 'time': 5, 'id': '3', 'fid': 5 }, { 'text': 'b', 'time': 6, 'id': '4', 'fid': 6
+}, { 'text': 'b', 'time': 6, 'id': '4', 'fid': 7 } ] }
 
         var id_list = [];
         var name_list = ['alice', 'bob', 'caaa', 'david', 'emily'];
@@ -61,170 +45,235 @@
                 'page': sp[len - 1]
             }
 
-            $.get('http://httpbin.org/get', params, function (obj) {
-                obj = t;
-                if (obj['status'] == 1)
-                    alert('load failed!');
-                // console.log(obj['status']);
+            console.log(params);
 
-                title = document.getElementById("title-container");
-                var nt = document.createElement('h3');
-                nt.textContent = obj['title'];
-                title.append(nt);
-                
-                // old version
+            $.ajax({
+                "url": "json/thread.json",
+                beforeSend: function (xhr) {
+                    if (xhr.overrideMimeType) {	
+						xhr.overrideMimeType("application/json");
+					}
+                },
+                type: "get",
+                dataType: "json",
+                connectType: "application/json",
+                success: function (obj) {
+                    // obj = t;
+                    console.log(obj);
+                    if (obj['status'] == 1)
+                        alert('load failed!');
+                    // console.log(obj['status']);
 
-                // panel = document.getElementById('floors');
-                // for (i = 0; i < obj['data'].length; ++i)
-                // {
-                //     var d = document.createElement('div');
-                //     if (!(obj['data'][i]['id'] in id_list))
-                //         id_list.push(obj['data'][i]['id']);
+                    var floor_array = obj.data;
 
-                //     d.textContent = name_list[id_list.indexOf(obj['data'][i]['id'])] + obj['data'][i]['text'];
-                //     panel.append(d);
-                // }
+                    title = document.getElementById("title-container");
+                    var nt = document.createElement('h3');
+                    nt.textContent = obj['title'];
+                    title.append(nt);
 
+                    var x = Pager({
+                        totalCount: floor_array.length, //总条数
+                        pageSize: 6,    //每页显示6条内容，默认10
+                        buttonSize: 6,   //显示6个按钮，默认10
+                        pageParam: 'page',   //页码的参数名默认为'page'
+                        className:'pagination',    //分页的样式
+                        prevButton:'Prev',       //上一页按钮
+                        nextButton:'Next',       //下一页按钮
+                        firstButton:'First',      //第一页按钮
+                        lastButton:'Last',       //最后一页按钮
+                    });
+                    $("#table").after(x);
 
-                tbody = document.getElementById('tbody');
-                for (i = 0; i < obj['data'].length; ++i)
-                {
-                    var d = document.createElement('tr');
-                    d.className = 'row';
-                    d.name = 'floor';
-                    if (!(obj['data'][i]['id'] in id_list))
-                        id_list.push(obj['data'][i]['id']);
-                    
-                    var ucol = document.createElement('th');
-                    ucol.className = 'col-md-2';
-                    var uname = document.createElement('p');
-                    uname.textContent = name_list[id_list.indexOf(obj['data'][i]['id'])];
-                    ucol.appendChild(uname);
+                    tbody = document.getElementById('tbody');
+                    for (i = 0; i < floor_array.length; ++i)
+                    {
 
-                    var tcol = document.createElement('th');
-                    tcol.className = 'col-md-8';
-                    var ttext = document.createElement('p');
-                    ttext.textContent = obj['data'][i]['text'];
-                    var rdiv = document.createElement('div');
-                    rdiv.className = 'comment-wrap';
-                    var re_input = document.createElement('textarea');
-                    var re_button = document.createElement('button');
-                    re_input.name = "send-text";
-                    re_input.className = "form-control";
-                    // re_input.style = "width:550px; height:180px";
-                    re_input.rows = 5;
-                    re_input.textContent = "reply to " + uname.textContent + ": ";
-                    re_button.textContent = 'send';
-                    re_button.className = "button button-primary button-rounded button-small";
-                    re_button.name = 'send-btn';
-                    rdiv.appendChild(re_input);
-                    rdiv.appendChild(re_button);
+                        html_code = "";
 
-                    tcol.appendChild(ttext);
-                    tcol.appendChild(document.createElement('br'));
-                    tcol.appendChild(rdiv);
+                        if (!(floor_array[i]['id'] in id_list))
+                            id_list.push(floor_array[i]['id']);
 
-                    var timecol = document.createElement('th');
-                    timecol.className = 'col-md-1';
-                    var ttime = document.createElement('p');
-                    ttime.textContent = obj['data'][i]['time'];
-                    timecol.appendChild(ttime);
+                        var nickname = name_list[id_list.indexOf(floor_array[i]['id'])];
+                        var floor_text = floor_array[i]['text'];
+                        var floor_time = floor_array[i]['time'];
 
-                    var bcol = document.createElement('th');
-                    bcol.className = 'col-md-1';
-                    var bbtn = document.createElement('button');
-                    bbtn.className = "button button-3d button-primary button-rounded";
-                    bbtn.name ='reply-btn';
-                    bbtn.textContent = 'reply';
-                    bcol.appendChild(bbtn);
+                        html_code += "<tr class='row'>" + 
+                        "<th class='col-md-2'>" + '<p>' + nickname + '</p></th>' + 
+                        "<th class='col-md-8'>" + '<p>' + floor_text + '</p><br>';
 
-                    d.appendChild(ucol);
-                    d.appendChild(tcol);
-                    d.appendChild(timecol);
-                    d.appendChild(bcol);
+                        if (floor_array[i].has_file)
+                            html_code += "<p class='embed-responsive embed-responsive-16by9'>" +
+  										 "<iframe class='embed-responsive-item' src='" + floor_array[i].file_url +
+										 "'allow='encrypted-media' allowfullscreen></iframe></p>";
 
-                    tbody.append(d);
-                }
-                // var add_div = document.createElement('div');
-                var add_input = document.createElement('textarea');
-                var add_input_file = document.createElement('input');
-                var add_button = document.createElement('button');
-                add_input.className = "form-control";
-                // add_input.style = "width:700px; height:180px";
-                add_input.rows = 7;
-                add_input_file.className = 'file';
-                add_input_file.type = 'file';
-                // <input id="post-file" name="file" type="file" multiple>
-                add_button.textContent = 'send';
-                add_button.className = "button button-primary button-rounded button-small";
-                add_button.name = 'add-button';
-                add_input.placeholder = "Reply to this thread:";
+                        html_code += "<div class='comment-wrap'>" + "<textarea name='send-text' class='form-control' rows='5'>reply to " + nickname + ': ' + '</textarea><button class="button button-primary button-rounded button-small" name="send-btn">send</button><div></th>';
 
-                // add_div.appendChild(add_input);
-                // add_div.appendChild(add_button);
-                add_div = document.getElementById("add-div");
-                add_div.append(add_input);
-                add_div.append(add_input_file);
-                add_div.append(add_button);
-                
+                        html_code += "<th class='col-md-1'><p>" + floor_time + '</p></th>';
 
+                        html_code += "<th class='col-md-1'><button class='button button-3d button-primary button-rounded' name='reply-btn'>reply</button></th></tr>"
 
-                
-                $('.comment-wrap').hide();
-                $('[name="reply-btn"]').click(function() {
-                    var $commentWrap = $(this).parent().parent().children('.col-md-8').children('.comment-wrap');
-                    var $tohide = $(this).parent().parent().siblings().children('.col-md-8').find('.comment-wrap.show');
-                    // console.log($tohide);
-                    $tohide.hide();
-                    $tohide.removeClass('show');
-                    // $tohide.children().hide();
-
-                    if ($commentWrap.hasClass('show')) {
-                        $commentWrap.removeClass('show').hide();
-                        // console.log("2");
-                    } else {
-                        $commentWrap.addClass('show').show();
-                        // console.log("3");
+                        $("#tbody").append(html_code);
                     }
-                });
+                    // var add_div = document.createElement('div');
+                    var add_input = document.createElement('textarea');
+                    var add_input_file = document.createElement('input');
+                    var add_button = document.createElement('button');
+                    add_input.className = "form-control";
+                    add_input.name = 'add-input';
+                    // add_input.style = "width:700px; height:180px";
+                    add_input.rows = 7;
+                    add_input_file.className = 'file';
+                    add_input_file.id = 'post-file';
+                    add_input_file.type = 'file';
+                    // <input id="post-file" name="file" type="file" multiple>
+                    add_button.textContent = 'send';
+                    add_button.className = "button button-primary button-rounded button-small";
+                    add_button.name = 'add-button';
+                    add_input.placeholder = "Reply to this thread:";
 
-                $('[name="send-btn"]').click(function() {
-                    var $text = $(this).siblings("[name='send-text']");
-                    console.log($text.val());
-                    params = {
-                        'userid': 'Anonymous',
-                        'text': $text.val(),
-                        'tid': tid
-                    };
+                    // add_div.appendChild(add_input);
+                    // add_div.appendChild(add_button);
+                    add_div = document.getElementById("add-div");
+                    add_div.append(add_input);
+                    add_div.append(add_input_file);
+                    add_div.append(add_button);
+                    
+                    $('.comment-wrap').hide();
+                    $('[name="reply-btn"]').click(function() {
+                        var $commentWrap = $(this).parent().parent().children('.col-md-8').children('.comment-wrap');
+                        var $tohide = $(this).parent().parent().siblings().children('.col-md-8').find('.comment-wrap.show');
+                        $tohide.hide();
+                        $tohide.removeClass('show');
 
-                    $.get('/send_reply/', params, function(ret){
-                        if(ret == "0") {
-                            alert("Sent successfully!");
-                            window.location.reload();
+                        if ($commentWrap.hasClass('show')) {
+                            $commentWrap.removeClass('show').hide();
+                        } else {
+                            $commentWrap.addClass('show').show();
                         }
-                    })
-                });
+                    });
 
-                
-                $('[name="add-button"]').click(function() {
-                    var $text = $(this).siblings("[name='add-input']");
-                    console.log($text.val());
-                    params = {
-                        'userid': 'Anonymous',
-                        'text': $text.val(),
-                        'tid': tid
-                    };
-
-                    $.get('/send_reply/', params, function(ret){
-                        if(ret == "0") {
-                            alert("Sent successfully!");
-                            window.location.reload();
+                    $('[name="send-btn"]').click(function() {
+                        var $text = $(this).siblings("[name='send-text']");
+                        if ($text.val().length == 0)
+                        {
+                            alert("please enter something!");
+                            return;
                         }
-                    })
+                        console.log($text.val());
+                        params = {
+                            'userid': 'Anonymous',
+                            'text': $text.val(),
+                            'tid': tid
+                        };
 
-                });
+                        $.get('/send_reply/', params, function(ret){
+                            if(ret == "0") {
+                                alert("Sent successfully!");
+                                window.location.reload();
+                            }
+                        })
+                    });
 
+                    
+                    $('[name="add-button"]').click(function() {
+                        var $text = $(this).siblings("[name='add-input']");
+                        console.log($text.val());
+                        if ($text.val().length == 0)
+                        {
+                            alert("please enter something!");
+                            return;
+                        }
+                        params = {
+                            'userid': 'Anonymous',
+                            'text': $text.val(),
+                            'tid': tid
+                        };
 
+                        $.get('/send_reply/', params, function(ret){
+                            if(ret == "0") {
+                                alert("Sent successfully!");
+                                window.location.reload();
+                            }
+                        })
+                    });
+
+                    $('#post-file').fileinput({//初始化上传文件框
+                        showUpload : false,
+                        showRemove : false,
+                        uploadAsync: true,
+                        uploadLabel: "Upload",//设置上传按钮的汉字
+                        uploadClass: "btn btn-primary",//设置上传按钮样式
+                        showCaption: false,//是否显示标题
+                        // language: "",//配置语言
+                        uploadUrl: "BannerPicAction!addPicture.action", 
+                        maxFileSize : 0,
+                        maxFileCount: 5,/*允许最大上传数，可以多个，当前设置单个*/
+                        enctype: 'multipart/form-data',
+                        //allowedPreviewTypes : [ 'image' ], //allowedFileTypes: ['image', 'video', 'flash'],
+                        // allowedFileExtensions : ["jpg", "png","gif"],/*上传文件格式*/
+                        msgFilesTooMany: "Number of your files ({n}) is over maximum of ({m}).",
+                        dropZoneTitle: "Please Drag your files here", 
+                        dropZoneClickTitle: " or Click here to upload your files",
+                        showBrowse: false,
+                        browseOnZoneClick: true,
+                        slugCallback : function(filename) {
+                            return filename.replace('(', '_').replace(']', '_');
+                        }
+                    });
+                    //上传文件成功，回调函数 
+                    $('#post-file').on("filepreupload", function(event, data, previewId, index) {     //上传中  
+                                var form = data.form, files = data.files, extra = data.extra,  
+                                response = data.response, reader = data.reader;  
+                                console.log('文件正在上传',data);
+                                console.log(event);
+                                console.log(previewId);
+                                console.log(index);
+                    }); 
+                    $('#post-file').on("fileuploaded", function(event, data, previewId, index) {
+                    console.log("hello")
+                    var result = data.response; //后台返回的json
+                    //console.log(result.status);
+                    //console.log(result.id);
+                    $('#picid').val(result.id);//拿到后台传回来的id，给图片的id赋值序列化表单用
+                    //如果是上传多张图
+                    /*
+                    //计数标记，用于确保全部图片都上传成功了，再提交表单信息
+                    var fileCount = $('#post-file').fileinput('getFilesCount');
+                    if(fileCount==1){
+                    $.ajax({//上传文件成功后再保存图片信息
+                        url:'BannerPicAction!savaForm.action',
+                        data:$('#form1').serialize(),//form表单的值
+                        success:function(data,status){
+                            ...
+                        },
+                        cache:false,                    //不缓存
+                    });
+                    }
+                    */
+                    $.ajax({//上传文件成功后再保存图片信息
+                        url:'BannerPicAction!savaForm.action',
+                        type:'post',
+                        dataType:'json',
+                        data:$('#form1').serialize(),//form表单的值
+                        success:function(data,status){
+                            if (status == "success") {
+                            
+                                if(data.status == "success"){//提交成功
+                                
+                                    //跳转回添加页面
+                                
+                                }else{
+                                    alert("添加失败,编码的错误!");
+                                }
+                            
+                                } else {
+                                    alert("添加失败,ajax请求返回失败!");
+                            }
+                        },
+                        cache:false,                    //不缓存
+                    });
+			    });
+            }
             })
         })
     </script>
@@ -305,24 +354,7 @@
 					</tr>
 				</thead>
 					<tbody id="tbody">
-					  <!-- <tr class="row">
-						<th class="col-md-7">
-							<p><a href="./tid?" class="thread-title">【FOR 葛格】主人，精致的宠物猪猪，要不要领养一只</a></p>
-							<p class="thread-text">这是一只有些精致的宠物猪猪，喜欢打扮自己的男孩子要不要领养一只呢？...</p>
-						</th>
-						<td class="col-md-1 thread-number">
-							<p><i class="glyphicon glyphicon-plus"></i> 79</p>
-							<p><i class="glyphicon glyphicon-eye-open"></i> 322</p>
-						</td>
-						<td class="col-md-2">
-							<p class="thread-post"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-post"> dorisxiaoyao</a></p>
-							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-20 16:40:23</p>
-						</td>
-						<td class="col-md-2">
-							<p class="thread-last"><i class="glyphicon glyphicon-user"></i><a href="./uid?" class="thread-last"> dorisxiaoyao</a></p>
-							<p><i class="glyphicon glyphicon-calendar"></i> 2018-05-21 00:38:11</p>
-						</td>
-					</tr> -->
+
 					</tbody>
               </table>
         <div id="add-div">
