@@ -296,6 +296,39 @@ $(document).ready(function load() {
                 },
                 cache:false,                    //不缓存
             });
+
+
+            $("form").submit(function(result) {
+				$('#post-file').fileinput('upload');
+    			var new_post = {
+					"title": $("#post-title").val(),
+					"text": $("#post-text").val(),
+					"pid": "pid",  // needs server
+					"time": Date()
+				}
+				console.log(new_post);
+				$.ajax({
+					type: "get",
+					url: "thread.html?post", // url?
+					data: new_post,
+					dataType: 'json',
+					contentType: 'application/json; charset=utf-8',
+					success: function (result) {
+						if (result.status == 0) {
+							console.log("服务器接收成功！");
+							window.location.href = "thread.html?tid=" + result.tid; // redirect
+						}
+						else {
+							console.log("服务器接收数据失败！");
+							window.location.reload();
+						}
+					},
+					error: function () {
+						console.log("程序运行出错！");
+						window.location.reload();
+					}
+            	});
+			  });
         });
     }
     })
