@@ -21,11 +21,22 @@
     </style>
     <link rel="stylesheet" type="text/css" href="css/buttons.css" />
     <script src="js/jquery.js"></script>
+    <script src="js/sha1.js"></script>
+    <script src="js/md5.js"></script>
     <script>
+    	function encrypt(pwd)
+    	{
+            var sha1_hash = hex_sha1(pwd);
+            var md5_hash = hex_md5(sha1_hash);
+            //alert(pwd)
+            //alert(md5_hash)
+            return md5_hash
+    	}
+
         function login()
         {
             var usr = document.getElementById("usr").value;
-            var pwd = document.getElementById("pwd").value;
+            var pwd = encrypt(document.getElementById("pwd").value);
             var params = {
                 'visitor': 0,
                 "id": usr,
@@ -47,7 +58,7 @@
         function signup()
         {
             var usr = document.getElementById("usr").value;
-            var pwd = document.getElementById("pwd").value;
+            var pwd = encrypt(document.getElementById("pwd").value);
             var params = {
                 "id": usr,
                 "pwd": pwd
