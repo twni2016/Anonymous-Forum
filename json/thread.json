@@ -3,12 +3,12 @@
     "title": "the very first thread",
     "data": [
         {
-            "text": "the first floor",
+            "text": "http://www.pku.edu.cn/",
             "time": "2018-05-20 16:40:23",
             "id": 1,
             "fid": 1,
             "has_file": true,
-            "file_url": "img/bbs.png"
+            "file_url": ["img/bbs.png", "img/shudong.png"]
         },
         {
             "text": "i am the second floor",

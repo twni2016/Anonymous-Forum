@@ -16,11 +16,15 @@
     <link rel="stylesheet" type="text/css" href="css/buttons.css" />
     <link rel="stylesheet" type="text/css" href="css/widearea.css" />
     <link rel="stylesheet" type="text/css"href="css/fileinput.css" >
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" rel="stylesheet">
 
     <script src="js/widearea.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/fileinput.js"></script>
     <script src="js/bootstrapPager.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>    
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js"></script>
+    
     <script>
 
 var tid = 12;
@@ -30,252 +34,277 @@ var t = { 'status': 0, 'title': 'the very first thread', 'data': [ { 'text': 'a'
 4, 'id': '3', 'fid': 4 }, { 'text': 'a', 'time': 5, 'id': '3', 'fid': 5 }, { 'text': 'b', 'time': 6, 'id': '4', 'fid': 6
 }, { 'text': 'b', 'time': 6, 'id': '4', 'fid': 7 } ] }
 
-        var id_list = [];
-        var name_list = ['alice', 'bob', 'caaa', 'david', 'emily'];
+var id_list = [];
+var name_list = ['alice', 'bob', 'caaa', 'david', 'emily'];
 
-        $(document).ready(function load() {
-            var url = document.URL;
-            var sp = url.split('/');
-            var len = sp.length;
-            // 预期sp[len-2]应该是thread的tid部分 sp[len-1]应该是page部分
+function linkify(text) {
+    var linkRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(linkRegex, function(link) {
+        return '<a href="' + link + '">' + link + '</a>';
+    })
+}
+
+$(document).ready(function load() {
+    var url = document.URL;
+    var sp = url.split('/');
+    var len = sp.length;
+    // 预期sp[len-2]应该是thread的tid部分 sp[len-1]应该是page部分
 
 
-            params = {
-                'tid': sp[len - 2],
-                'page': sp[len - 1]
+    params = {
+        'tid': sp[len - 2],
+        'page': sp[len - 1]
+    }
+
+    console.log(params);
+
+    $.ajax({
+        "url": "json/thread.json",
+        beforeSend: function (xhr) {
+            if (xhr.overrideMimeType) {	
+                xhr.overrideMimeType("application/json");
             }
+        },
+        type: "get",
+        dataType: "json",
+        connectType: "application/json",
+        success: function (obj) {
+            // obj = t;
+            console.log(obj);
+            if (obj['status'] == 1)
+                alert('load failed!');
+            // console.log(obj['status']);
 
-            console.log(params);
+            var floor_array = obj.data;
 
-            $.ajax({
-                "url": "json/thread.json",
-                beforeSend: function (xhr) {
-                    if (xhr.overrideMimeType) {	
-						xhr.overrideMimeType("application/json");
-					}
-                },
-                type: "get",
-                dataType: "json",
-                connectType: "application/json",
-                success: function (obj) {
-                    // obj = t;
-                    console.log(obj);
-                    if (obj['status'] == 1)
-                        alert('load failed!');
-                    // console.log(obj['status']);
+            title = document.getElementById("title-container");
+            var nt = document.createElement('h3');
+            nt.textContent = obj['title'];
+            title.append(nt);
 
-                    var floor_array = obj.data;
+            var x = Pager({
+                totalCount: floor_array.length, //总条数
+                pageSize: 6,    //每页显示6条内容，默认10
+                buttonSize: 6,   //显示6个按钮，默认10
+                pageParam: 'page',   //页码的参数名默认为'page'
+                className:'pagination',    //分页的样式
+                prevButton:'Prev',       //上一页按钮
+                nextButton:'Next',       //下一页按钮
+                firstButton:'First',      //第一页按钮
+                lastButton:'Last',       //最后一页按钮
+            });
+            $("#table").after(x);
 
-                    title = document.getElementById("title-container");
-                    var nt = document.createElement('h3');
-                    nt.textContent = obj['title'];
-                    title.append(nt);
+            tbody = document.getElementById('tbody');
+            for (i = 0; i < floor_array.length; ++i)
+            {
 
-                    var x = Pager({
-                        totalCount: floor_array.length, //总条数
-                        pageSize: 6,    //每页显示6条内容，默认10
-                        buttonSize: 6,   //显示6个按钮，默认10
-                        pageParam: 'page',   //页码的参数名默认为'page'
-                        className:'pagination',    //分页的样式
-                        prevButton:'Prev',       //上一页按钮
-                        nextButton:'Next',       //下一页按钮
-                        firstButton:'First',      //第一页按钮
-                        lastButton:'Last',       //最后一页按钮
-                    });
-                    $("#table").after(x);
+                html_code = "";
 
-                    tbody = document.getElementById('tbody');
-                    for (i = 0; i < floor_array.length; ++i)
-                    {
+                if (!(floor_array[i]['id'] in id_list))
+                    id_list.push(floor_array[i]['id']);
 
-                        html_code = "";
+                var nickname = name_list[id_list.indexOf(floor_array[i]['id'])];
+                var floor_text = floor_array[i]['text'];
+                var floor_time = floor_array[i]['time'];
 
-                        if (!(floor_array[i]['id'] in id_list))
-                            id_list.push(floor_array[i]['id']);
+                html_code += "<tr class='row'>" + 
+                "<th class='col-md-2'>" + '<p>' + nickname + '</p></th>' + 
+                "<th class='col-md-8'>" + '<p>' + floor_text + '</p><br>';
 
-                        var nickname = name_list[id_list.indexOf(floor_array[i]['id'])];
-                        var floor_text = floor_array[i]['text'];
-                        var floor_time = floor_array[i]['time'];
-
-                        html_code += "<tr class='row'>" + 
-                        "<th class='col-md-2'>" + '<p>' + nickname + '</p></th>' + 
-                        "<th class='col-md-8'>" + '<p>' + floor_text + '</p><br>';
-
-                        if (floor_array[i].has_file)
+                if (floor_array[i].has_file)
+                {
+                    floor_array[i].file_url.forEach(element =>{
+                        extension = element.split('.').pop();
+                        if (extension == 'jpg' || extension == 'png' || extension == 'gif') {
+                            html_code += "<a href='" + element + "'data-toggle='lightbox' data-title='" + element + "'data-gallery='gallery-" + i.toString() + "'>" + 
+                                    "<img src='" + element + "'class='img-fluid insert-img'></a>";
+                        }
+                        else {
                             html_code += "<p class='embed-responsive embed-responsive-16by9'>" +
-  										 "<iframe class='embed-responsive-item' src='" + floor_array[i].file_url +
-										 "'allow='encrypted-media' allowfullscreen></iframe></p>";
-
-                        html_code += "<div class='comment-wrap'>" + "<textarea name='send-text' class='form-control' rows='5'>reply to " + nickname + ': ' + '</textarea><button class="button button-primary button-rounded button-small" name="send-btn">send</button><div></th>';
-
-                        html_code += "<th class='col-md-1'><p>" + floor_time + '</p></th>';
-
-                        html_code += "<th class='col-md-1'><button class='button button-3d button-primary button-rounded' name='reply-btn'>reply</button></th></tr>"
-
-                        $("#tbody").append(html_code);
-                    }
-                    // var add_div = document.createElement('div');
-                    var add_input = document.createElement('textarea');
-                    var add_input_file = document.createElement('input');
-                    var add_button = document.createElement('button');
-                    add_input.className = "form-control";
-                    add_input.name = 'add-input';
-                    // add_input.style = "width:700px; height:180px";
-                    add_input.rows = 7;
-                    add_input_file.className = 'file';
-                    add_input_file.id = 'post-file';
-                    add_input_file.type = 'file';
-                    // <input id="post-file" name="file" type="file" multiple>
-                    add_button.textContent = 'send';
-                    add_button.className = "button button-primary button-rounded button-small";
-                    add_button.name = 'add-button';
-                    add_input.placeholder = "Reply to this thread:";
-
-                    // add_div.appendChild(add_input);
-                    // add_div.appendChild(add_button);
-                    add_div = document.getElementById("add-div");
-                    add_div.append(add_input);
-                    add_div.append(add_input_file);
-                    add_div.append(add_button);
-                    
-                    $('.comment-wrap').hide();
-                    $('[name="reply-btn"]').click(function() {
-                        var $commentWrap = $(this).parent().parent().children('.col-md-8').children('.comment-wrap');
-                        var $tohide = $(this).parent().parent().siblings().children('.col-md-8').find('.comment-wrap.show');
-                        $tohide.hide();
-                        $tohide.removeClass('show');
-
-                        if ($commentWrap.hasClass('show')) {
-                            $commentWrap.removeClass('show').hide();
-                        } else {
-                            $commentWrap.addClass('show').show();
+                                "<iframe class='embed-responsive-item' src='" + element +
+                                "'allow='encrypted-media' allowfullscreen></iframe></p>";
                         }
                     });
+                }
 
-                    $('[name="send-btn"]').click(function() {
-                        var $text = $(this).siblings("[name='send-text']");
-                        if ($text.val().length == 0)
-                        {
-                            alert("please enter something!");
-                            return;
-                        }
-                        console.log($text.val());
-                        params = {
-                            'userid': 'Anonymous',
-                            'text': $text.val(),
-                            'tid': tid
-                        };
 
-                        $.get('/send_reply/', params, function(ret){
-                            if(ret == "0") {
-                                alert("Sent successfully!");
-                                window.location.reload();
-                            }
-                        })
-                    });
+                html_code += "<div class='comment-wrap'>" + "<textarea name='send-text' class='form-control' rows='5'>reply to " + nickname + ': ' + '</textarea><button class="button button-primary button-rounded button-small" name="send-btn">send</button><div></th>';
 
-                    
-                    $('[name="add-button"]').click(function() {
-                        var $text = $(this).siblings("[name='add-input']");
-                        console.log($text.val());
-                        if ($text.val().length == 0)
-                        {
-                            alert("please enter something!");
-                            return;
-                        }
-                        params = {
-                            'userid': 'Anonymous',
-                            'text': $text.val(),
-                            'tid': tid
-                        };
+                html_code += "<th class='col-md-1'><p>" + floor_time + '</p></th>';
 
-                        $.get('/send_reply/', params, function(ret){
-                            if(ret == "0") {
-                                alert("Sent successfully!");
-                                window.location.reload();
-                            }
-                        })
-                    });
+                html_code += "<th class='col-md-1'><button class='button button-3d button-primary button-rounded' name='reply-btn'>reply</button></th></tr>"
 
-                    $('#post-file').fileinput({//初始化上传文件框
-                        showUpload : false,
-                        showRemove : false,
-                        uploadAsync: true,
-                        uploadLabel: "Upload",//设置上传按钮的汉字
-                        uploadClass: "btn btn-primary",//设置上传按钮样式
-                        showCaption: false,//是否显示标题
-                        // language: "",//配置语言
-                        uploadUrl: "BannerPicAction!addPicture.action", 
-                        maxFileSize : 0,
-                        maxFileCount: 5,/*允许最大上传数，可以多个，当前设置单个*/
-                        enctype: 'multipart/form-data',
-                        //allowedPreviewTypes : [ 'image' ], //allowedFileTypes: ['image', 'video', 'flash'],
-                        // allowedFileExtensions : ["jpg", "png","gif"],/*上传文件格式*/
-                        msgFilesTooMany: "Number of your files ({n}) is over maximum of ({m}).",
-                        dropZoneTitle: "Please Drag your files here", 
-                        dropZoneClickTitle: " or Click here to upload your files",
-                        showBrowse: false,
-                        browseOnZoneClick: true,
-                        slugCallback : function(filename) {
-                            return filename.replace('(', '_').replace(']', '_');
-                        }
-                    });
-                    //上传文件成功，回调函数 
-                    $('#post-file').on("filepreupload", function(event, data, previewId, index) {     //上传中  
-                                var form = data.form, files = data.files, extra = data.extra,  
-                                response = data.response, reader = data.reader;  
-                                console.log('文件正在上传',data);
-                                console.log(event);
-                                console.log(previewId);
-                                console.log(index);
-                    }); 
-                    $('#post-file').on("fileuploaded", function(event, data, previewId, index) {
-                    console.log("hello")
-                    var result = data.response; //后台返回的json
-                    //console.log(result.status);
-                    //console.log(result.id);
-                    $('#picid').val(result.id);//拿到后台传回来的id，给图片的id赋值序列化表单用
-                    //如果是上传多张图
-                    /*
-                    //计数标记，用于确保全部图片都上传成功了，再提交表单信息
-                    var fileCount = $('#post-file').fileinput('getFilesCount');
-                    if(fileCount==1){
-                    $.ajax({//上传文件成功后再保存图片信息
-                        url:'BannerPicAction!savaForm.action',
-                        data:$('#form1').serialize(),//form表单的值
-                        success:function(data,status){
-                            ...
-                        },
-                        cache:false,                    //不缓存
-                    });
-                    }
-                    */
-                    $.ajax({//上传文件成功后再保存图片信息
-                        url:'BannerPicAction!savaForm.action',
-                        type:'post',
-                        dataType:'json',
-                        data:$('#form1').serialize(),//form表单的值
-                        success:function(data,status){
-                            if (status == "success") {
-                            
-                                if(data.status == "success"){//提交成功
-                                
-                                    //跳转回添加页面
-                                
-                                }else{
-                                    alert("添加失败,编码的错误!");
-                                }
-                            
-                                } else {
-                                    alert("添加失败,ajax请求返回失败!");
-                            }
-                        },
-                        cache:false,                    //不缓存
-                    });
-			    });
+                // html_code = linkify(html_code);
+                $("#tbody").append(html_code);
             }
-            })
-        })
+            // var add_div = document.createElement('div');
+            var add_input = document.createElement('textarea');
+            var add_input_file = document.createElement('input');
+            var add_button = document.createElement('button');
+            add_input.className = "form-control";
+            add_input.name = 'add-input';
+            // add_input.style = "width:700px; height:180px";
+            add_input.rows = 7;
+            add_input_file.className = 'file';
+            add_input_file.id = 'post-file';
+            add_input_file.type = 'file';
+            // <input id="post-file" name="file" type="file" multiple>
+            add_button.textContent = 'send';
+            add_button.className = "button button-primary button-rounded button-small";
+            add_button.name = 'add-button';
+            add_input.placeholder = "Reply to this thread:";
+
+            // add_div.appendChild(add_input);
+            // add_div.appendChild(add_button);
+            add_div = document.getElementById("add-div");
+            add_div.append(add_input);
+            add_div.append(add_input_file);
+            add_div.append(add_button);
+            
+            $('.comment-wrap').hide();
+            $('[name="reply-btn"]').click(function() {
+                var $commentWrap = $(this).parent().parent().children('.col-md-8').children('.comment-wrap');
+                var $tohide = $(this).parent().parent().siblings().children('.col-md-8').find('.comment-wrap.show');
+                $tohide.hide();
+                $tohide.removeClass('show');
+
+                if ($commentWrap.hasClass('show')) {
+                    $commentWrap.removeClass('show').hide();
+                } else {
+                    $commentWrap.addClass('show').show();
+                }
+            });
+
+            $('[name="send-btn"]').click(function() {
+                var $text = $(this).siblings("[name='send-text']");
+                if ($text.val().length == 0)
+                {
+                    alert("please enter something!");
+                    return;
+                }
+                console.log($text.val());
+                params = {
+                    'userid': 'Anonymous',
+                    'text': $text.val(),
+                    'tid': tid
+                };
+
+                $.get('/send_reply/', params, function(ret){
+                    if(ret == "0") {
+                        alert("Sent successfully!");
+                        window.location.reload();
+                    }
+                })
+            });
+
+            
+            $('[name="add-button"]').click(function() {
+                var $text = $(this).siblings("[name='add-input']");
+                console.log($text.val());
+                if ($text.val().length == 0)
+                {
+                    alert("please enter something!");
+                    return;
+                }
+                params = {
+                    'userid': 'Anonymous',
+                    'text': $text.val(),
+                    'tid': tid
+                };
+
+                $.get('/send_reply/', params, function(ret){
+                    if(ret == "0") {
+                        alert("Sent successfully!");
+                        window.location.reload();
+                    }
+                })
+            });
+
+            $('#post-file').fileinput({//初始化上传文件框
+                showUpload : false,
+                showRemove : false,
+                uploadAsync: true,
+                uploadLabel: "Upload",//设置上传按钮的汉字
+                uploadClass: "btn btn-primary",//设置上传按钮样式
+                showCaption: false,//是否显示标题
+                // language: "",//配置语言
+                uploadUrl: "BannerPicAction!addPicture.action", 
+                maxFileSize : 0,
+                maxFileCount: 5,/*允许最大上传数，可以多个，当前设置单个*/
+                enctype: 'multipart/form-data',
+                //allowedPreviewTypes : [ 'image' ], //allowedFileTypes: ['image', 'video', 'flash'],
+                // allowedFileExtensions : ["jpg", "png","gif"],/*上传文件格式*/
+                msgFilesTooMany: "Number of your files ({n}) is over maximum of ({m}).",
+                dropZoneTitle: "Please Drag your files here", 
+                dropZoneClickTitle: " or Click here to upload your files",
+                showBrowse: false,
+                browseOnZoneClick: true,
+                slugCallback : function(filename) {
+                    return filename.replace('(', '_').replace(']', '_');
+                }
+            });
+            //上传文件成功，回调函数 
+            $('#post-file').on("filepreupload", function(event, data, previewId, index) {     //上传中  
+                        var form = data.form, files = data.files, extra = data.extra,  
+                        response = data.response, reader = data.reader;  
+                        console.log('文件正在上传',data);
+                        console.log(event);
+                        console.log(previewId);
+                        console.log(index);
+            }); 
+            $('#post-file').on("fileuploaded", function(event, data, previewId, index) {
+            console.log("hello")
+            var result = data.response; //后台返回的json
+            //console.log(result.status);
+            //console.log(result.id);
+            $('#picid').val(result.id);//拿到后台传回来的id，给图片的id赋值序列化表单用
+            //如果是上传多张图
+            /*
+            //计数标记，用于确保全部图片都上传成功了，再提交表单信息
+            var fileCount = $('#post-file').fileinput('getFilesCount');
+            if(fileCount==1){
+            $.ajax({//上传文件成功后再保存图片信息
+                url:'BannerPicAction!savaForm.action',
+                data:$('#form1').serialize(),//form表单的值
+                success:function(data,status){
+                    ...
+                },
+                cache:false,                    //不缓存
+            });
+            }
+            */
+            $.ajax({//上传文件成功后再保存图片信息
+                url:'BannerPicAction!savaForm.action',
+                type:'post',
+                dataType:'json',
+                data:$('#form1').serialize(),//form表单的值
+                success:function(data,status){
+                    if (status == "success") {
+                    
+                        if(data.status == "success"){//提交成功
+                        
+                            //跳转回添加页面
+                        
+                        }else{
+                            alert("添加失败,编码的错误!");
+                        }
+                    
+                        } else {
+                            alert("添加失败,ajax请求返回失败!");
+                    }
+                },
+                cache:false,                    //不缓存
+            });
+        });
+    }
+    })
+})
+
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+            event.preventDefault();
+            $(this).ekkoLightbox();
+});
     </script>
 
     <script>
