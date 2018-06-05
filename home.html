@@ -16,6 +16,8 @@
 	<link href="css/buttons.css" rel="stylesheet">
 	<link href="css/fileinput.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link href="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css" rel="stylesheet">
 
 	</head>
   	<body>
@@ -56,16 +58,17 @@
           	<p><a href="about.html" class="button button-glow button-rounded button-raised button-primary">Learn more &raquo;</a></p>
         </div>
     </div>
-	
+	<div id='main'>
     <div class="container">
-		<table class="table table-hover" id="table">
+		<table class="table table-hover " id="table">
 			<caption><h2>Trending</h2></caption>
 			<thead>
 				<tr class="warning row">
-					<th class="col-md-7">Thread</th>
-					<th class="col-md-1">Stat</th>
-					<th class="col-md-2">Post</th>
-					<th class="col-md-2">Last</th>
+					<th class="col-md-6"><button id="button-thread" class="button button-glow button-rounded button-highlight">Thread</button></th>
+					<th class="col-md-1"><button id="button-reply" class="button button-glow button-rounded button-royal">Reply</button></th>
+					<th class="col-md-1"><button id="button-view" class="button button-glow button-rounded button-caution">View</button></th>
+					<th class="col-md-2"><button id="button-post" class="button button-glow button-rounded button-action">Post</button></th>
+					<th class="col-md-2"><button id="button-last" class="button button-glow button-rounded button-primary">Last</button></th>
 				</tr>
 			</thead>
 			<tbody id="tbody">
@@ -113,6 +116,7 @@
           	<p>&copy; 2018 PKU CS.</p>
 		</footer>
 	</div> <!-- /container -->
+	</div>
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script src="js/jquery.js"></script>
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
@@ -120,6 +124,7 @@
 	<script src="js/bootstrapPager.js"></script>
 	<script src="js/fileinput.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
 
     <script>
 
@@ -138,85 +143,186 @@
 		}
 
 		$(function(){ // all be ready
-
-			var page_name = 'page';
-			var page_size = 6;
-			var page_num = getUrlParam(page_name); // 获取page_num，便于分页
-			if (page_num == null) page_num = 1;
-
-			$.ajax({
-				url:"json/home.json",  // home.html?page=page_num
-				beforeSend: function(xhr){  // te be commented
-					if (xhr.overrideMimeType) {	
-						xhr.overrideMimeType("application/json");
-					}
-				},
-				type:"get",
-				dataType:"json",
-				contentType: "application/json", 
-				success: function(result) {
-					// console.log(result);  
-					if (result.status == 1) {
-						alert('json status false');
-						return;
-					}
-					var thread_array = result.data;
-					var x = Pager({
-						totalCount: thread_array.length, //总条数
-						pageSize: page_size,    //每页显示6条内容，默认10
-						buttonSize: 6,   //显示6个按钮，默认10
-						pageParam: page_name,   //页码的参数名默认为'page'
-						className:'pagination',    //分页的样式
-						prevButton:'Prev',       //上一页按钮
-						nextButton:'Next',       //下一页按钮
-						firstButton:'First',      //第一页按钮
-						lastButton:'Last',       //最后一页按钮
-					});
-					$("#table").after(x);
-					var html_code = "";
-					for (var i = (page_num - 1) * page_size; i < thread_array.length && i < page_num * page_size; i += 1) { // 需要修改，后端分页
-						html_code +=
-							"<tr class='row'>" +
-							"<th class='col-md-7'>" + 
-							"<p><a href='thread.html?tid=" + thread_array[i].tid + "' class='thread-title'>" + thread_array[i].title + "</a></p>" +
-							"<p class='thread-text'>" + thread_array[i].text + "</p>";
-						if (thread_array[i].has_file) {
-							thread_array[i].file_url.forEach(element => {
-								extension = element.split('.').pop();
-								console.log(extension)
-								if (extension == 'jpg' || extension == 'png' || extension == 'gif') {
-									html_code += "<a href='" + element + "'data-toggle='lightbox' data-title='" + element + "'data-gallery='gallery-" + i.toString() + "'>" + 
-    										"<img src='" + element + "'class='img-fluid insert-img'></a>";
-								}
-								else {
-									html_code += "<p><iframe class='insert-file' src='" + element +
-											"'allow='encrypted-media' allowfullscreen></iframe></p>";
-								}
-							});
+			function ajax_for_threads(url) {
+				var page_name = 'page';
+				var page_size = 6;
+				var page_num = getUrlParam(page_name); // 获取page_num，便于分页
+				if (page_num == null) page_num = 1;
+				$.ajax({
+					url:url,  // home.html?page=page_num
+					beforeSend: function(xhr){  // te be commented
+						if (xhr.overrideMimeType) {	
+							xhr.overrideMimeType("application/json");
 						}
+					},
+					type:"get",
+					dataType:"json",
+					contentType: "application/json", 
+					success: function(result) {
+						// console.log(result);  
+						if (result.status == 1) {
+							alert('json status false');
+							return;
+						}
+						var thread_array = result.data;
+						var x = Pager({
+							totalCount: thread_array.length, //总条数
+							pageSize: page_size,    //每页显示6条内容，默认10
+							buttonSize: 6,   //显示6个按钮，默认10
+							pageParam: page_name,   //页码的参数名默认为'page'
+							className:'pagination',    //分页的样式
+							prevButton:'Prev',       //上一页按钮
+							nextButton:'Next',       //下一页按钮
+							firstButton:'First',      //第一页按钮
+							lastButton:'Last',       //最后一页按钮
+						});
+						$("#table").after(x);
+						var html_code = "";
+						console.log(page_num, page_size);
+						for (var i = (page_num - 1) * page_size; i < thread_array.length && i < page_num * page_size; i += 1) { // 需要修改，后端分页
+							var img_num = 0;
+							var img_code = "";
+							var icon_code = "";
+							var icon = {
+								image: false,
+								pdf: false,
+								video: false,
+								audio: false,
+								ppt: false,
+								code: false,
+								word: false,
+								xls: false,
+								zip: false
+							}
+							if (thread_array[i].has_file) {
+								thread_array[i].file_url.forEach(element => {
+									extension = element.split('.').pop();
+									if (img_num < 4 && $.inArray(extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp']) != -1) {
+										img_code += "<a href='" + element + "'data-toggle='lightbox' data-title='" + element + "'data-gallery='gallery-" + i.toString() + "'>" + 
+												"<img src='" + element + "'class='img-fluid insert-img'></a>";
+										img_num++;
+										if (icon.image == false)
+											icon_code += "<i class='fa fa-file-image-o' aria-hidden='true'></i>";
+										icon.image = true;
+									}
+									else if (extension == 'pdf' && icon.pdf == false) {
+										icon_code += "<i class='fa fa-file-pdf-o' aria-hidden='true'></i>";
+										icon.pdf = true;
+									}
+									else if (extension == 'ppt' && icon.ppt == false) {
+										icon_code += "<i class='fa fa-file-powerpoint-o' aria-hidden='true'></i>";
+										icon.ppt = true;
+									}
+									else if (extension == 'xls' && icon.xls == false) {
+										icon_code += "<i class='fa fa-file-excel-o' aria-hidden='true'></i>";
+										icon.xls = true;
+									}
+									else if ($.inArray(extension, ['mp3', 'wav', 'wma', 'ogg']) != -1 && icon.audio == false) {
+										icon_code += "<i class='fa fa-file-audio-o' aria-hidden='true'></i>";
+										icon.audio = true;
+									}
+									else if ($.inArray(extension, ['mp4', 'avi', 'mov', 'rmvb', 'mpeg', 'flv', 'wmv']) != -1 && icon.video == false) {
+										icon_code += "<i class='fa fa-file-video-o' aria-hidden='true'></i>";
+										icon.video = true;
+									}
+									else if ($.inArray(extension, ['doc', 'docx', 'md']) != -1 && icon.word == false) {
+										icon_code += "<i class='fa fa-file-word-o' aria-hidden='true'></i>";
+										icon.word = true;
+									}
+									else if ($.inArray(extension, ['c', 'cpp', 'py', 'html', 'js']) != -1 && icon.code == false) {
+										icon_code += "<i class='fa fa-file-code-o' aria-hidden='true'></i>";
+										icon.code = true;
+									}
+									else if ($.inArray(extension, ['zip', 'rar', 'gz']) != -1 && icon.zip == false) {
+										icon_code += "<i class='fa fa-file-zip-o' aria-hidden='true'></i>";
+										icon.zip = true;
+									}
+								});
+							}
+							html_code +=
+								"<tr class='row'>" +
+								"<th class='col-md-6'>" + 
+								"<p><a href='thread.html?tid=" + thread_array[i].tid + "' class='thread-title'>" + thread_array[i].title + ' ' + icon_code + "</a></p>" +
+								"<p class='thread-text'>" + thread_array[i].text + "</p>";
+							html_code += img_code;
+							html_code +=
+								"</th><td class='col-md-1'>" +
+								"<p><i class='glyphicon glyphicon-plus'></i> "+ thread_array[i].re +"</p></td>" +
+								"</th><td class='col-md-1'>" +
+								"<p><i class='glyphicon glyphicon-eye-open'></i> "+ thread_array[i].view +"</p></td>" + 
+								"<td class='col-md-2'>" + 
+								"<p class='thread-post'><i class='glyphicon glyphicon-user'></i> " + thread_array[i].pid + "</p>" +
+								"<p><i class='glyphicon glyphicon-calendar'></i><span class='thread-time'> " +  thread_array[i].post + "</span></p></td>" +
+								"<td class='col-md-2'>" + 
+								"<p class='thread-last'><i class='glyphicon glyphicon-user'></i> " + thread_array[i].lid + "</p>" + 
+								"<p><i class='glyphicon glyphicon-calendar'></i><span class='thread-time'> " + thread_array[i].last + "</span></p></td>" + 
+								"</tr>";
+						}
+						html_code = linkify(html_code); 
+						$("#tbody").append(html_code);
 
-						html_code +=
-							"</th><td class='col-md-1 thread-number'>" +
-							"<p><i class='glyphicon glyphicon-plus'></i> "+ thread_array[i].re +"</p>" + 
-							"<p><i class='glyphicon glyphicon-eye-open'></i> "+ thread_array[i].view +"</p></td>" + 
-							"<td class='col-md-2'>" + 
-							"<p class='thread-post'><i class='glyphicon glyphicon-user'></i> " + thread_array[i].pid + "</p>" + 
-							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].post + "</p></td>" +
-							"<td class='col-md-2'>" + 
-							"<p class='thread-last'><i class='glyphicon glyphicon-user'></i> " + thread_array[i].lid + "</p>" + 
-							"<p><i class='glyphicon glyphicon-calendar'></i> " + thread_array[i].last + "</p></td>" + 
-							"</tr>";
-					}
-					html_code = linkify(html_code); 
-					$("#tbody").append(html_code);
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+						alert(XMLHttpRequest.status);
+						alert(XMLHttpRequest.readyState);
+						alert(textStatus);
+					},
+				})
+			}
+			
+			ajax_for_threads("json/home.json"); // default. hottest url: ?sorting=hot
+			var click_time = {
+				thread: 1, // default.
+				reply: 0,
+				view: 0,
+				post: 0,
+				last: 0
+			}
 
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown) {
-					alert(XMLHttpRequest.status);
-					alert(XMLHttpRequest.readyState);
-					alert(textStatus);
-				},
-			})
+			$('#button-thread').click(function() {
+				$("#tbody").empty(); // remove tbody
+				click_time.thread = 1 - click_time.thread;
+				if (click_time.thread == 0)
+					ajax_for_threads("json/home1.json"); // coldest url: ?sorting=hot_false
+				else
+					ajax_for_threads("json/home.json"); // hottest url: ?sorting=hot_true
+			});
+
+			$('#button-reply').click(function() {
+				$("#tbody").empty(); // remove tbody
+				click_time.reply = 1 - click_time.reply;
+				if (click_time.reply == 0)
+					ajax_for_threads("json/home.json"); // fewest replies url: ?sorting=reply_false
+				else
+					ajax_for_threads("json/home1.json"); // most replies url: ?sorting=reply_true
+			});
+
+			$('#button-view').click(function() {
+				$("#tbody").empty(); // remove tbody
+				click_time.view = 1 - click_time.view;
+				if (click_time.view == 0)
+					ajax_for_threads("json/home.json"); // fewest views url: ?sorting=view_false
+				else
+					ajax_for_threads("json/home1.json"); // most views url: ?sorting=view_true
+			});
+
+			$('#button-post').click(function() {
+				$("#tbody").empty(); // remove tbody
+				click_time.post = 1 - click_time.post;
+				if (click_time.post == 0)
+					ajax_for_threads("json/home.json"); // earliest post url: ?sorting=post_false
+				else
+					ajax_for_threads("json/home1.json"); // lattest post url: ?sorting=post_true
+			});
+
+			$('#button-last').click(function() {
+				$("#tbody").empty(); // remove tbody
+				click_time.last = 1 - click_time.last;
+				if (click_time.last == 0)
+					ajax_for_threads("json/home.json"); // earliest last url: ?sorting=last_false
+				else
+					ajax_for_threads("json/home1.json"); // lattest last url: ?sorting=last_true
+			});
 
 			$('#post-file').fileinput({//初始化上传文件框
 			        showUpload : false,

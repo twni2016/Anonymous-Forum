@@ -10,8 +10,14 @@ h2 {
     font-weight: bold;
 }
 
+p, label {
+    color: white;
+}
 .jumbotron{
-    margin-bottom: 5px;
+    margin-bottom: 0px;
+}
+.jumbotron p {
+    color: black;
 }
 
 thead {
@@ -22,12 +28,22 @@ thead {
 
 .thread-title {
     font-size: large;
+    color:yellow;
 }
 
 .thread-text {
     font-size: small;
     font-weight: normal;
-    color: grey;
+    font-style: italic;
+    color: orange;
+}
+
+a:hover {
+    color: white;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color:maroon;
 }
 
 .thread-number {
@@ -36,30 +52,39 @@ thead {
 }
 
 .thread-post {
-    color: #AA0000;
+    color: blue;
     font-weight: bold;
 }
 
 .thread-last {
-    color: #00AA00;
+    color: purple;
     font-weight: bold;
 }
 
-.form-group{
+.form-group, .form-control{
     font-size: large;
 }
 
-.form-control{
-    font-size: large;
-}
 
 .insert-img {
-    height: 250px;
+    height: 150px;
     margin-right: 10px;
 }
 
-.insert-file {
-    height: 250px;
-    margin-right: 10px;
+#main {
+    background-color: #111111;
+    background-image: url("../img/logo_opacity.png");
+    background-size: 100%;
+}
+
+footer {
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+}
+
+#button-thread, #button-view, #button-reply, #button-post, #button-last{
+    /* display: block; */
+    height: 100%;
     width: 100%;
+    font-size: larger;
 }
