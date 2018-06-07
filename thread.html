@@ -121,15 +121,16 @@ $(document).ready(function load() {
                                     "<img src='" + element + "'class='img-fluid insert-img'></a>";
                         }
                         else {
-                            html_code += "<p class='embed-responsive embed-responsive-16by9'>" +
-                                "<iframe class='embed-responsive-item' src='" + element +
-                                "'allow='encrypted-media' allowfullscreen></iframe></p>";
+                            // html_code += "<p class='embed-responsive embed-responsive-16by9'>" +
+                            //     "<iframe class='embed-responsive-item' src='" + element +
+                            //     "'allow='encrypted-media' allowfullscreen></iframe></p>";
+                            html_code += "<br/><br/><a href='" + element + "'>" + element + "</a>";
                         }
                     });
                 }
 
 
-                html_code += "<div class='comment-wrap'>" + "<textarea name='send-text' class='form-control' rows='5'>reply to " + nickname + ': ' + '</textarea><button class="button button-primary button-rounded button-small" name="send-btn">send</button><div></th>';
+                html_code += "<br/><br/><div class='comment-wrap'>" + "<textarea name='send-text' class='form-control' rows='5'>reply to " + nickname + ': ' + '</textarea><button class="button button-primary button-rounded button-small" name="send-btn">send</button><div></th>';
 
                 html_code += "<th class='col-md-1'><p>" + floor_time + '</p></th>';
 

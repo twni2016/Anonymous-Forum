@@ -8,7 +8,7 @@
             "id": 1,
             "fid": 1,
             "has_file": true,
-            "file_url": ["img/bbs.png", "img/shudong.png"]
+            "file_url": ["img/bbs.png", "img/shudong.png", "中期报告.pdf", "README.md"]
         },
         {
             "text": "i am the second floor",
