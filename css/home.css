@@ -5,7 +5,7 @@
 h2 {
     color: red;
 }
-#personal{
+#personal, #logout{
     color:white;
     font-weight: bold;
 }
@@ -28,23 +28,23 @@ thead {
 
 .thread-title {
     font-size: large;
-    color:yellow;
+    /* color:red; */
 }
 
 .thread-text {
     font-size: small;
     font-weight: normal;
     font-style: italic;
-    color: orange;
+    color: grey;
 }
 
-a:hover {
+/* a:hover {
     color: white;
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
     background-color:maroon;
-}
+} */
 
 .thread-number {
     font-size: normal;
@@ -72,9 +72,9 @@ a:hover {
 }
 
 #main {
-    background-color: #111111;
+    /* background-color:white;
     background-image: url("../img/logo_opacity.png");
-    background-size: 100%;
+    background-size: 100%; */
 }
 
 footer {
