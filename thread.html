@@ -109,8 +109,8 @@ $(document).ready(function load() {
                 var floor_time = floor_array[i]['time'];
 
                 html_code += "<tr class='row'>" + 
-                "<th class='col-md-2'>" + '<p>' + nickname + '</p></th>' + 
-                "<th class='col-md-8'>" + '<p>' + floor_text + '</p><br>';
+                "<th class='col-md-2'>" + '<p class=floor-text>' + nickname + '</p></th>' + 
+                "<th class='col-md-8'>" + '<p class=floor-text>' + floor_text + '</p><br>';
 
                 if (floor_array[i].has_file)
                 {
@@ -132,7 +132,7 @@ $(document).ready(function load() {
 
                 html_code += "<br/><br/><div class='comment-wrap'>" + "<textarea name='send-text' class='form-control' rows='5'>reply to " + nickname + ': ' + '</textarea><button class="button button-primary button-rounded button-small" name="send-btn">send</button><div></th>';
 
-                html_code += "<th class='col-md-1'><p>" + floor_time + '</p></th>';
+                html_code += "<th class='col-md-1'><p class=floor-text>" + floor_time + '</p></th>';
 
                 html_code += "<th class='col-md-1'><button class='button button-3d button-primary button-rounded' name='reply-btn'>reply</button></th></tr>"
 
@@ -170,10 +170,18 @@ $(document).ready(function load() {
                 $tohide.hide();
                 $tohide.removeClass('show');
 
+                $('[name="reply-btn"]').text("reply");
+
                 if ($commentWrap.hasClass('show')) {
                     $commentWrap.removeClass('show').hide();
+                    // $(this).value = "fucl";
+                    $(this).text("reply");
+                    // $commentWrap.text = "reply";
                 } else {
                     $commentWrap.addClass('show').show();
+                    // $(this).val("hide").button("refresh");
+                    $(this).text("hide");
+                    // $(this).text = "hide";
                 }
             });
 
@@ -372,6 +380,9 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
                     <li>
                         <a href="user.html" class="btn btn-success btn-lg active" id="personal" role="button">Personal Info &raquo;</a>
                     </li>
+                    <li>
+                        <a href="index.html" class="btn btn-danger btn-lg active" id="logout" role="button">Log Out &raquo;</a>
+                    </li>
                 </ul>
                 <!-- <form class="navbar-form navbar-right">
                 <div class="form-group">
@@ -386,7 +397,6 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
             <!--/.navbar-collapse -->
         </div>
     </nav>
-
 
     <!-- 这部分应该是标题 -->
     <div class="jumbotron">

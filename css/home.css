@@ -38,6 +38,12 @@ thead {
     color: grey;
 }
 
+.floor-text {
+    /* font-size: small; */
+    font-weight: normal;
+    color: black;
+}
+
 /* a:hover {
     color: white;
 }
